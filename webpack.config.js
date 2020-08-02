@@ -3,7 +3,7 @@ const path = require('path')
 
 module.exports = {
   entry: './src/index.ts',
-  devtool: 'inline-source-map',
+  // devtool: 'inline-source-map',
   cache: true,
   optimization: {
     removeAvailableModules: false,
@@ -44,7 +44,10 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js']
+    extensions: ['.ts', '.tsx', '.js'],
+    alias: {
+      snabbdom: path.resolve(__dirname, 'node_modules', 'snabbdom', 'build', 'package')
+    }
   },
   plugins: [
     new HtmlWebPackPlugin({
