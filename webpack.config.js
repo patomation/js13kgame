@@ -52,7 +52,7 @@ module.exports = {
   plugins: [
     new HtmlWebPackPlugin({
       hash: true,
-      title: 'Vanilla Starter',
+      title: '404',
       template: './public/index.html',
       filename: './index.html'
     })
