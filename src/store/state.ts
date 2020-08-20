@@ -1,17 +1,22 @@
 export interface State {
-  score: number,
+  gameOver: boolean
+  gameStarted: boolean
+  score: number
+  showMenuScreen: boolean
   showTitleScreen: boolean
+}
+
+export let state: State = {
+  gameOver: false,
+  gameStarted: false,
+  score: 5000,
+  showMenuScreen: false,
+  showTitleScreen: true
 }
 
 export type NewState = {
   [S in keyof State]?: State[S]
 }
-
-export let state: State = {
-  score: 5000,
-  showTitleScreen: true
-}
-
 export function setState (newState: NewState): void {
   state = { ...state, ...newState }
   stateChange()

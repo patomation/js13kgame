@@ -2,10 +2,13 @@ import { h } from 'snabbdom/h' // helper function for creating vnodes
 import { Modal } from './components/Modal'
 import { State } from './store/state'
 import { VNode } from 'snabbdom/build/package/vnode'
-import { scoreButtonClick, startGame } from './store/actions'
+import { scoreButtonClick, startGame, resumeGame, newGame } from './store/actions'
 
 export const view = ({
-  score, showTitleScreen: showStartScreen
+  gameOver,
+  score,
+  showMenuScreen,
+  showTitleScreen
 }: State): VNode => h('section', {
   style: {
     color: '#fff',
@@ -35,9 +38,23 @@ export const view = ({
       flexGrow: '1'
     }
   }),
-  showStartScreen
-    ? Modal({}, [
-      h('h1', 'Game Title'),
+  showTitleScreen
+    ? Modal({
+      style: {
+        opacity: '1' // it starts off as visible in the beginning of the game
+      }
+    }, [
+      h('h1', { style: { paddingBottom: '1rem' } }, '404'),
       h('button', { on: { click: () => startGame() } }, 'Start')
+    ]) : null,
+  showMenuScreen
+    ? Modal({}, [
+      h('h1', { style: { paddingBottom: '1rem' } }, 'menu'),
+      h('button', { on: { click: () => resumeGame() } }, 'resume')
+    ]) : null,
+  gameOver
+    ? Modal({}, [
+      h('h1', { style: { paddingBottom: '1rem' } }, 'Game Over'),
+      h('button', { on: { click: () => newGame() } }, 'new game')
     ]) : null
 ])

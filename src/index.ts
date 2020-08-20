@@ -4,6 +4,9 @@ import ufo from '../assets/sprites/ufo.png'
 import { up, down, left, right } from './lib/input'
 
 import { render } from './render'
+import { hotkey } from '@patomation/hotkey'
+import { pauseGame, startGame } from './store/actions'
+import { state } from './store/state'
 
 window.addEventListener('DOMContentLoaded', () => {
   render()
@@ -24,6 +27,14 @@ window.addEventListener('DOMContentLoaded', () => {
   })
   right(() => {
     ufoSprite.x += moveAmount
+  })
+
+  hotkey('escape').down(() => {
+    if (state.gameStarted) {
+      pauseGame()
+    } else {
+      startGame()
+    }
   })
 })
 
