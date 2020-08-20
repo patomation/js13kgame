@@ -9,7 +9,8 @@
       "snabbdom",
       "store",
       "typescript",
-      "canvas"
+      "canvas",
+      "view"
     ]]
   }
 }
