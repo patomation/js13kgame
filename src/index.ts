@@ -1,6 +1,10 @@
 import { patch } from './lib/patch'
 import { h } from 'snabbdom/h' // helper function for creating vnodes
 import { VNode } from 'snabbdom/vnode'
+import { initCanvas, resizeCanvas, addImage } from './lib/canvas'
+import { Sprite } from './classes/Sprite'
+import ufo from '../assets/sprites/ufo.png'
+import { up, down, left, right } from './lib/input'
 
 import { Modal } from './components/Modal'
 
@@ -18,7 +22,6 @@ const view = ({
   score, showStartScreen
 }: State) => h('section', {
   style: {
-    background: '#222',
     color: '#fff',
     height: '100%',
     display: 'flex',
@@ -48,10 +51,9 @@ const view = ({
   ]),
   h('main', {
     style: {
-      flexGrow: '1',
-      background: 'gray'
+      flexGrow: '1'
     }
-  }, 'myApp'),
+  }),
   showStartScreen
     ? Modal({}, [
       h('h1', 'Game Title'),
@@ -74,4 +76,24 @@ window.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('container') as Element
   vnode = patch(container, view(state))
   render()
+
+  initCanvas()
+  resizeCanvas(window.innerWidth, window.innerHeight)
+
+  const ufoSprite: Sprite = addImage(ufo, 200, 100)
+  const moveAmount = 25
+  up(() => {
+    ufoSprite.y -= moveAmount
+  })
+  down(() => {
+    ufoSprite.y += moveAmount
+  })
+  left(() => {
+    ufoSprite.x -= moveAmount
+  })
+  right(() => {
+    ufoSprite.x += moveAmount
+  })
 })
+
+window.onresize = () => resizeCanvas(window.innerWidth, window.innerHeight)
