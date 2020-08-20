@@ -7,6 +7,7 @@ import { scoreButtonClick, startGame, resumeGame, newGame } from './store/action
 export const view = ({
   gameOver,
   score,
+  showInventoryScreen,
   showMenuScreen,
   showTitleScreen
 }: State): VNode => h('section', {
@@ -56,5 +57,10 @@ export const view = ({
     ? Modal({}, [
       h('h1', { style: { paddingBottom: '1rem' } }, 'Game Over'),
       h('button', { on: { click: () => newGame() } }, 'new game')
+    ]) : null,
+  showInventoryScreen
+    ? Modal({}, [
+      h('h1', { style: { paddingBottom: '1rem' } }, 'Inventory'),
+      h('p', { style: { paddingBottom: '1rem' } }, 'empty')
     ]) : null
 ])

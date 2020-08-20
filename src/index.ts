@@ -5,8 +5,7 @@ import { up, down, left, right } from './lib/input'
 
 import { render } from './render'
 import { hotkey } from '@patomation/hotkey'
-import { pauseGame, startGame } from './store/actions'
-import { state } from './store/state'
+import { escape, inventory } from './store/actions'
 
 window.addEventListener('DOMContentLoaded', () => {
   render()
@@ -29,13 +28,9 @@ window.addEventListener('DOMContentLoaded', () => {
     ufoSprite.x += moveAmount
   })
 
-  hotkey('escape').down(() => {
-    if (state.gameStarted) {
-      pauseGame()
-    } else {
-      startGame()
-    }
-  })
+  hotkey('escape', escape)
+
+  hotkey('i', inventory)
 })
 
 window.onresize = () => resizeCanvas(window.innerWidth, window.innerHeight)

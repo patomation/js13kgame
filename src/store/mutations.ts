@@ -16,6 +16,10 @@ export function toggleGameOver (): void {
   setState({ gameOver: !state.gameOver })
 }
 
+export function toggleInventory (): void {
+  setState({ showInventoryScreen: !state.showInventoryScreen })
+}
+
 export function toggleMenu (): void {
   setState({ showMenuScreen: !state.showMenuScreen })
 }

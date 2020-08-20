@@ -2,6 +2,7 @@ export interface State {
   gameOver: boolean
   gameStarted: boolean
   score: number
+  showInventoryScreen: boolean
   showMenuScreen: boolean
   showTitleScreen: boolean
 }
@@ -10,6 +11,7 @@ export let state: State = {
   gameOver: false,
   gameStarted: false,
   score: 5000,
+  showInventoryScreen: false,
   showMenuScreen: false,
   showTitleScreen: true
 }
