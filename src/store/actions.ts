@@ -1,6 +1,19 @@
-import { incrementScore, toggleTitle, toggleMenu, gameStarted, toggleGameOver, setScore, toggleInventory } from './mutations'
+import { incrementScore, toggleTitle, toggleMenu, gameStarted, toggleGameOver, setScore, toggleInventory, toggleArrowUp, toggleArrowDown, toggleArrowLeft, toggleArrowRight } from './mutations'
 import { state } from './state'
 import { VNode } from 'snabbdom/build/package/vnode'
+
+export function arrowUp (): void {
+  toggleArrowUp()
+}
+export function arrowDown (): void {
+  toggleArrowDown()
+}
+export function arrowLeft (): void {
+  toggleArrowLeft()
+}
+export function arrowRight (): void {
+  toggleArrowRight()
+}
 
 export function escape (): void {
   if (state.showInventoryScreen) {

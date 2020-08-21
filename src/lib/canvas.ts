@@ -80,14 +80,12 @@ const isPaused = false
 export function drawCanvas (): void {
   clearCanvas()
   // draw images
-  console.log('images.length', images.length)
   images.forEach(({ image, x, y }) => {
     if (ctx) {
       ctx.drawImage(image, x, y)
     }
   })
   // Draw shapes
-  // console.log('fps tick')
   // Call itself
   if (!isPaused) {
     window.requestAnimationFrame(drawCanvas)
@@ -101,8 +99,6 @@ export function drawCanvas (): void {
  * @param y number px
  */
 export function addImage (url:string, x: number, y: number): Sprite {
-  console.log('add image')
-
   const sprite = new Sprite({ url, x, y })
   // Track images
   images.push(sprite)

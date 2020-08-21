@@ -12,6 +12,19 @@ export function setScore (value: number): void {
   setState({ score: value })
 }
 
+export function toggleArrowUp (): void {
+  setState({ arrowUp: !state.arrowUp })
+}
+export function toggleArrowDown (): void {
+  setState({ arrowDown: !state.arrowDown })
+}
+export function toggleArrowLeft (): void {
+  setState({ arrowLeft: !state.arrowLeft })
+}
+export function toggleArrowRight (): void {
+  setState({ arrowRight: !state.arrowRight })
+}
+
 export function toggleGameOver (): void {
   setState({ gameOver: !state.gameOver })
 }

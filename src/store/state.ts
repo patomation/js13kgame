@@ -1,6 +1,10 @@
 import { Item } from '../classes/Item'
 
 export interface State {
+  arrowUp: boolean
+  arrowDown: boolean
+  arrowLeft: boolean
+  arrowRight: boolean
   gameOver: boolean
   gameStarted: boolean
   inventory: Item[],
@@ -11,6 +15,10 @@ export interface State {
 }
 
 export let state: State = {
+  arrowUp: false,
+  arrowDown: false,
+  arrowLeft: false,
+  arrowRight: false,
   gameOver: false,
   gameStarted: false,
   inventory: [
@@ -22,7 +30,7 @@ export let state: State = {
   score: 5000,
   showInventoryScreen: false,
   showMenuScreen: false,
-  showTitleScreen: true
+  showTitleScreen: false
 }
 
 export type NewState = {
