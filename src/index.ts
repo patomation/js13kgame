@@ -72,6 +72,20 @@ function update () {
       velocityX = 0
     }
   }
+
+  // boundaries
+  if (ufoSprite.x < 0 - 64) {
+    // velocityX = 0
+    ufoSprite.x = window.innerWidth
+  } else if (ufoSprite.x > window.innerWidth) {
+    // velocityX = 0
+    ufoSprite.x = 0 - 64
+  } else if (ufoSprite.y < 0) {
+    ufoSprite.y = window.innerHeight
+  } else if (ufoSprite.y > window.innerHeight) {
+    ufoSprite.y = 0
+  }
+
   ufoSprite.x += velocityX / 10
   ufoSprite.y += velocityY / 10
   window.requestAnimationFrame(update)
