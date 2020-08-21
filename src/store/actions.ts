@@ -1,5 +1,6 @@
 import { incrementScore, toggleTitle, toggleMenu, gameStarted, toggleGameOver, setScore, toggleInventory } from './mutations'
 import { state } from './state'
+import { VNode } from 'snabbdom/build/package/vnode'
 
 export function escape (): void {
   if (state.showInventoryScreen) {
@@ -15,6 +16,12 @@ export function escape (): void {
 
 export function inventory (): void {
   toggleInventory()
+}
+
+export function inventoryItemClick (event: MouseEvent, vnode: VNode): void {
+  if (vnode.data) {
+    console.log('vnode', vnode.data.index)
+  }
 }
 
 export function newGame (): void {

@@ -7,6 +7,10 @@ import { render } from './render'
 import { hotkey } from '@patomation/hotkey'
 import { escape, inventory } from './store/actions'
 
+if (module && module.hot) {
+  module.hot.accept()
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   render()
 

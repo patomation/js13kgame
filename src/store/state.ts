@@ -1,6 +1,9 @@
+import { Item } from '../classes/Item'
+
 export interface State {
   gameOver: boolean
   gameStarted: boolean
+  inventory: Item[],
   score: number
   showInventoryScreen: boolean
   showMenuScreen: boolean
@@ -10,6 +13,12 @@ export interface State {
 export let state: State = {
   gameOver: false,
   gameStarted: false,
+  inventory: [
+    new Item('helm'),
+    new Item('light sword'),
+    new Item('health'),
+    new Item('dungeon key')
+  ],
   score: 5000,
   showInventoryScreen: false,
   showMenuScreen: false,

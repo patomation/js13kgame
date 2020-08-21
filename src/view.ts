@@ -1,8 +1,8 @@
 import { h } from 'snabbdom/h' // helper function for creating vnodes
 import { Modal } from './components/Modal'
-import { State } from './store/state'
+import { State, state } from './store/state'
 import { VNode } from 'snabbdom/build/package/vnode'
-import { scoreButtonClick, startGame, resumeGame, newGame } from './store/actions'
+import { scoreButtonClick, startGame, resumeGame, newGame, inventoryItemClick } from './store/actions'
 
 export const view = ({
   gameOver,
@@ -61,6 +61,10 @@ export const view = ({
   showInventoryScreen
     ? Modal({}, [
       h('h1', { style: { paddingBottom: '1rem' } }, 'Inventory'),
-      h('p', { style: { paddingBottom: '1rem' } }, 'empty')
+      h('ol',
+        state.inventory.map(({ name }, index) =>
+          h('li', { index, on: { click: inventoryItemClick as EventListener } }, name)
+        )
+      )
     ]) : null
 ])
