@@ -49,5 +49,5 @@ export function onStateChange (callback: Callback): void {
 }
 
 function stateChange (): void {
-  if (stateChangedCallback) stateChangedCallback()
+  if (stateChangedCallback !== undefined) stateChangedCallback()
 }

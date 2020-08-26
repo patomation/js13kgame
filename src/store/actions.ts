@@ -32,7 +32,7 @@ export function inventory (): void {
 }
 
 export function inventoryItemClick (event: MouseEvent, vnode: VNode): void {
-  if (vnode.data) {
+  if (vnode.data !== undefined) {
     console.log('vnode', vnode.data.index)
   }
 }
