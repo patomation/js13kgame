@@ -44,11 +44,10 @@ window.onresize = () => resizeCanvas(window.innerWidth, window.innerHeight)
 
 let velocityY = 0
 let velocityX = 0
-function update () {
+function update (): void {
   const maxVelocity = 100
   const acceleration = 10
   const friction = 5
-  console.log('vX', velocityX, 'vY', velocityY)
 
   if (state.arrowUp && velocityY > -maxVelocity) velocityY -= acceleration
   if (state.arrowDown && velocityY < maxVelocity) velocityY += acceleration
