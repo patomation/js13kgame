@@ -40,7 +40,7 @@ children?: ArrayOrElement<VNodeChildElement>
       textAlign: 'center'
     }
   }, children),
-  click ? h('div', {
+  click !== undefined ? h('div', {
     props: { className: 'Modal__close-button' },
     style: {
       position: 'absolute',
@@ -52,7 +52,7 @@ children?: ArrayOrElement<VNodeChildElement>
     },
     on: { click }
   }, 'X') : null,
-  click ? h('div', {
+  click !== undefined ? h('div', {
     props: { className: 'Modal__close-overlay' },
     style: {
       position: 'absolute',
