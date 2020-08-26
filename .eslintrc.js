@@ -1,21 +1,10 @@
 module.exports = {
-  parser: '@typescript-eslint/parser',
-  extends: [
-    'standard',
-    'plugin:@typescript-eslint/recommended'
-  ],
+  extends: 'standard-with-typescript',
   parserOptions: {
-    ecmaVersion: 2018,
-    sourceType: 'module'
-  },
-  settings: {},
-  plugins: [
-    '@typescript-eslint'
-  ],
-  env: {
-    browser: true,
-    es6: true,
-    node: true
+    project: [
+      './tsconfig.json',
+      './tsconfig.test.json'
+    ]
   },
   rules: {
     '@typescript-eslint/member-delimiter-style': 0
