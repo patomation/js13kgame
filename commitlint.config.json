@@ -5,6 +5,7 @@
   "rules": {
     "scope-enum": [2, "always", [
       "components",
+      "dialogue-box",
       "docs",
       "example",
       "inventory",
