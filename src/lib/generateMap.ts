@@ -3,7 +3,8 @@ import { isOdd } from "./isOdd"
 
 export function generateMap (
   width: number, 
-  height: number
+  height: number,
+  tileMap: number[][]
 ): HTMLImageElement {
   const ctx = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D
   const cellSize = 64
@@ -20,9 +21,17 @@ export function generateMap (
       color = color === 'gray' ? 'silver' : 'gray'
       ctx.beginPath()
       ctx.rect(x * cellSize, y * cellSize, cellSize, cellSize)
-      ctx.fillStyle = color
+      // wall color
+      let wallColor = tileMap[y] ? tileMap[y][x] === 1 ? 'purple' : null : null
+      ctx.fillStyle = wallColor || color
+      
       ctx.fill()
       ctx.closePath()
+
+      // Dev coords
+      ctx.fillStyle = 'black'
+      ctx.font = 'bold 18px Arial'
+      ctx.fillText(`${x},${y}`, x * 64 + 10, y * 64 + 30)
     }
   }
   ctx.restore()

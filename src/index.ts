@@ -42,9 +42,30 @@ window.addEventListener('DOMContentLoaded', () => {
 
 window.onresize = () => resizeCanvas(width, height)
 
-const mapWidth = 64 * 50
+const mapWidth = 64 * 30
 const mapHeight = 64 * 20
-const map = generateMap(mapWidth, mapHeight)
+const tileMap = [
+  [1, 1, 1, 1],
+  [1, 0, 0, 0],
+  [1, 0, 1, 0],
+  [1, 0, 0, 0],
+  [1, 0, 0, 0],
+  [1, 0, 0, 0],
+  [1, 0, 0, 0],
+  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+]
+const isWall = (tileMap: number[][], x: number, y: number): boolean => {
+  const pxToCord = (px: number): number => px / 64
+  const cx = Math.floor(pxToCord(x))
+  const cy = Math.floor(pxToCord(y))
+  console.log({ cx, cy })
+
+  return tileMap[cy] !== undefined ? tileMap[cy][cx] === 1 : false
+}
+const map = generateMap(mapWidth, mapHeight, tileMap)
 const player = new Image()
 player.src = playerSpriteSheet
 
@@ -52,10 +73,24 @@ let mapX = 0
 let mapY = 0
 let playerX = width / 2
 let playerY = height / 2
+const cellSize = 64
+
+const collusion = (x: number, y: number, dx: number, dy: number): boolean =>
+  (
+    x < dx + cellSize &&
+    x + cellSize > dx &&
+    y < dy + cellSize &&
+    y + cellSize > dy
+  )
 
 function update (): void {
-  if (state.arrowLeft) {
-    console.log('left')
+  const px = mapX + playerX
+  const py = mapY + playerY
+  if (collusion(px, py, 4 * 64, 5 * 64)) {
+    console.log('collision detected!')
+  }
+
+  if (state.arrowLeft && !isWall(tileMap, mapX + playerX - 10, mapY + playerY)) {
     if (mapX > 0 && playerX <= width / 2) {
       mapX -= 10
     } else if (playerX > 0) {
@@ -63,8 +98,7 @@ function update (): void {
     }
   }
 
-  if (state.arrowRight) {
-    console.log({ playerX, width })
+  if (state.arrowRight && !isWall(tileMap, mapX + playerX + 64 + 10, mapY + playerY)) {
     if (mapX < mapWidth - width && playerX >= width / 2) {
       mapX += 10
     } else if (playerX < width - 64) {
@@ -72,7 +106,7 @@ function update (): void {
     }
   }
 
-  if (state.arrowUp) {
+  if (state.arrowUp && !isWall(tileMap, mapX + playerX, mapY + playerY - 10)) {
     if (mapY > 0 && playerY <= height / 2) {
       mapY -= 10
     } else if (playerY > 0) {
@@ -80,7 +114,7 @@ function update (): void {
     }
   }
 
-  if (state.arrowDown) {
+  if (state.arrowDown && !isWall(tileMap, mapX + playerX, mapY + playerY + 64 + 10)) {
     if (mapY < mapHeight - height && playerY >= height / 2) {
       mapY += 10
     } else if (playerY < height - 64) {
@@ -96,4 +130,5 @@ function draw (): void {
   clearCanvas()
   ctx.drawImage(map, -mapX, -mapY)
   ctx.drawImage(player, playerX, playerY)
+  ctx.drawImage(player, 4 * 64, 5 * 64)
 }
