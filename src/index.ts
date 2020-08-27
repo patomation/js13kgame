@@ -6,7 +6,6 @@ import { render } from './render'
 import { hotkey } from '@patomation/hotkey'
 import { escape, inventory, arrowLeft, arrowDown, arrowUp, arrowRight } from './store/actions'
 import { state } from './store/state'
-import { isNegative } from './lib/isNegative'
 import { generateMap } from './lib/generateMap'
 
 const width = window.innerWidth
@@ -43,55 +42,58 @@ window.addEventListener('DOMContentLoaded', () => {
 
 window.onresize = () => resizeCanvas(width, height)
 
-const roomWidth = 500
-const roomHeight = 300
-const map = generateMap(roomWidth, roomHeight)
+const mapWidth = 64 * 50
+const mapHeight = 64 * 20
+const map = generateMap(mapWidth, mapHeight)
 const player = new Image()
 player.src = playerSpriteSheet
-let velocityX = 0
-let velocityY = 0
-let playerX = 0
-let playerY = 0
-function handleMove (): void {
-  const maxVelocity = 100
-  const acceleration = 10
-  const friction = 5
 
-  if (state.arrowUp && velocityY > -maxVelocity) velocityY -= acceleration
-  if (state.arrowDown && velocityY < maxVelocity) velocityY += acceleration
-  if (!state.arrowUp && !state.arrowDown) {
-    if (isNegative(velocityY)) {
-      velocityY += friction
-    } else if (velocityY !== 0) {
-      velocityY -= friction
-    } else {
-      velocityY = 0
-    }
-  }
-  if (state.arrowLeft && velocityX > -maxVelocity) velocityX -= acceleration
-  if (state.arrowRight && velocityX < maxVelocity) velocityX += acceleration
-  if (!state.arrowLeft && !state.arrowRight) {
-    if (isNegative(velocityX)) {
-      velocityX += friction
-    } else if (velocityX !== 0) {
-      velocityX -= friction
-    } else {
-      velocityX = 0
-    }
-  }
-
-  playerX += velocityX / 10
-  playerY += velocityY / 10
-}
+let mapX = 0
+let mapY = 0
+let playerX = width / 2
+let playerY = height / 2
 
 function update (): void {
-  handleMove()
+  if (state.arrowLeft) {
+    console.log('left')
+    if (mapX > 0 && playerX <= width / 2) {
+      mapX -= 10
+    } else if (playerX > 0) {
+      playerX -= 10
+    }
+  }
+
+  if (state.arrowRight) {
+    console.log({ playerX, width })
+    if (mapX < mapWidth - width && playerX >= width / 2) {
+      mapX += 10
+    } else if (playerX < width - 64) {
+      playerX += 10
+    }
+  }
+
+  if (state.arrowUp) {
+    if (mapY > 0 && playerY <= height / 2) {
+      mapY -= 10
+    } else if (playerY > 0) {
+      playerY -= 10
+    }
+  }
+
+  if (state.arrowDown) {
+    if (mapY < mapHeight - height && playerY >= height / 2) {
+      mapY += 10
+    } else if (playerY < height - 64) {
+      playerY += 10
+    }
+  }
+
   draw()
   window.requestAnimationFrame(update)
 }
 
 function draw (): void {
   clearCanvas()
-  ctx.drawImage(map, -playerX, -playerY)
-  ctx.drawImage(player, width / 2, height / 2)
+  ctx.drawImage(map, -mapX, -mapY)
+  ctx.drawImage(player, playerX, playerY)
 }
