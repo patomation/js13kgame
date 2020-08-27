@@ -1,21 +1,22 @@
-import { initCanvas, resizeCanvas, addImage } from './lib/canvas'
-import { Sprite } from './classes/Sprite'
-import ufo from '../assets/sprites/ufo.png'
+import { initCanvas, resizeCanvas, ctx, clearCanvas } from './lib/canvas'
+
+import playerSpriteSheet from '../assets/sprites/ufo.png'
 
 import { render } from './render'
 import { hotkey } from '@patomation/hotkey'
 import { escape, inventory, arrowLeft, arrowDown, arrowUp, arrowRight } from './store/actions'
 import { state } from './store/state'
 import { isNegative } from './lib/isNegative'
+import { generateMap } from './lib/generateMap'
 
-let ufoSprite: Sprite
+const width = window.innerWidth
+const height = window.innerHeight
+
 window.addEventListener('DOMContentLoaded', () => {
   render()
 
   initCanvas()
-  resizeCanvas(window.innerWidth, window.innerHeight)
-
-  ufoSprite = addImage(ufo, window.innerWidth / 2, window.innerHeight / 2)
+  resizeCanvas(width, height)
 
   hotkey('arrowup')
     .down(arrowUp)
@@ -40,11 +41,18 @@ window.addEventListener('DOMContentLoaded', () => {
   update()
 })
 
-window.onresize = () => resizeCanvas(window.innerWidth, window.innerHeight)
+window.onresize = () => resizeCanvas(width, height)
 
-let velocityY = 0
+const roomWidth = 500
+const roomHeight = 300
+const map = generateMap(roomWidth, roomHeight)
+const player = new Image()
+player.src = playerSpriteSheet
 let velocityX = 0
-function update (): void {
+let velocityY = 0
+let playerX = 0
+let playerY = 0
+function handleMove (): void {
   const maxVelocity = 100
   const acceleration = 10
   const friction = 5
@@ -72,20 +80,18 @@ function update (): void {
     }
   }
 
-  // boundaries
-  if (ufoSprite.x < 0 - 64) {
-    // velocityX = 0
-    ufoSprite.x = window.innerWidth
-  } else if (ufoSprite.x > window.innerWidth) {
-    // velocityX = 0
-    ufoSprite.x = 0 - 64
-  } else if (ufoSprite.y < 0) {
-    ufoSprite.y = window.innerHeight
-  } else if (ufoSprite.y > window.innerHeight) {
-    ufoSprite.y = 0
-  }
+  playerX += velocityX / 10
+  playerY += velocityY / 10
+}
 
-  ufoSprite.x += velocityX / 10
-  ufoSprite.y += velocityY / 10
+function update (): void {
+  handleMove()
+  draw()
   window.requestAnimationFrame(update)
+}
+
+function draw (): void {
+  clearCanvas()
+  ctx.drawImage(map, -playerX, -playerY)
+  ctx.drawImage(player, width / 2, height / 2)
 }

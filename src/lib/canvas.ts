@@ -1,7 +1,7 @@
 import { Sprite } from '../classes/Sprite'
 
-let canvas: HTMLCanvasElement
-let ctx: CanvasRenderingContext2D
+export let canvas: HTMLCanvasElement
+export let ctx: CanvasRenderingContext2D
 
 const color = 'green'
 
@@ -9,7 +9,7 @@ export function initCanvas (): void {
   canvas = document.getElementById('canvas') as HTMLCanvasElement
   ctx = canvas.getContext('2d') as CanvasRenderingContext2D
   // Start drawing canvas every frame
-  drawCanvas()
+  // drawCanvas()
 }
 
 /**
