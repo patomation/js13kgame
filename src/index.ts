@@ -3,44 +3,35 @@ import { initCanvas, resizeCanvas, ctx, clearCanvas } from './lib/canvas'
 import playerSpriteSheet from '../assets/sprites/ufo.png'
 
 import { render } from './render'
-import { hotkey } from '@patomation/hotkey'
-import { escape, inventory, arrowLeft, arrowDown, arrowUp, arrowRight } from './store/actions'
 import { state } from './store/state'
 import { generateMap } from './lib/generateMap'
+import { initInput } from './input'
+import { loadImage } from './lib/loadImage'
+
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+window.addEventListener('DOMContentLoaded', load)
+window.onresize = () => resizeCanvas(window.innerWidth, window.innerHeight)
 
 const width = window.innerWidth
 const height = window.innerHeight
 
-window.addEventListener('DOMContentLoaded', () => {
-  render()
+let map: HTMLImageElement
+let player: HTMLImageElement
 
+async function load (): Promise<void> {
+  // Await for things that need to load like images then start
+  map = generateMap(mapWidth, mapHeight, tileMap)
+  player = await loadImage(playerSpriteSheet)
+  start()
+}
+
+function start (): void {
+  initInput()
+  render() // snabbdom
   initCanvas()
   resizeCanvas(width, height)
-
-  hotkey('arrowup')
-    .down(arrowUp)
-    .up(arrowUp)
-
-  hotkey('arrowdown')
-    .down(arrowDown)
-    .up(arrowDown)
-
-  hotkey('arrowleft')
-    .down(arrowLeft)
-    .up(arrowLeft)
-
-  hotkey('arrowright')
-    .down(arrowRight)
-    .up(arrowRight)
-
-  hotkey('escape', escape)
-
-  hotkey('i', inventory)
-
-  update()
-})
-
-window.onresize = () => resizeCanvas(window.innerWidth, window.innerHeight)
+  update() // canvas
+}
 
 const mapWidth = 64 * 30
 const mapHeight = 64 * 20
@@ -66,10 +57,6 @@ const snapToGrid = (pixel: number): number => {
   console.log(pxToCord(pixel) * cellSize)
   return (pxToCord(pixel)) * cellSize
 }
-
-const map = generateMap(mapWidth, mapHeight, tileMap)
-const player = new Image()
-player.src = playerSpriteSheet
 
 let mapX = 0
 let mapY = 0

@@ -12,6 +12,7 @@
       "docs",
       "example",
       "inventory",
+      "load",
       "main",
       "render",
       "snabbdom",
