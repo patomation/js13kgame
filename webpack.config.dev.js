@@ -50,7 +50,8 @@ module.exports = {
       hash: true,
       title: '404',
       template: './public/index.html',
-      filename: './index.html'
+      filename: './index.html',
+      favicon: './public/favicon.ico'
     })
   ],
   output: {
