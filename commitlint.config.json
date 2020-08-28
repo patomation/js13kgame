@@ -18,7 +18,8 @@
       "tools",
       "typescript",
       "canvas",
-      "view"
+      "view",
+      "webpack"
     ]]
   }
 }

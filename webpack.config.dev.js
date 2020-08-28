@@ -2,14 +2,10 @@ const HtmlWebPackPlugin = require('html-webpack-plugin')
 const path = require('path')
 
 module.exports = {
+  mode: 'development',
   entry: './src/index.ts',
-  // devtool: 'inline-source-map',
+  devtool: 'inline-source-map',
   cache: true,
-  optimization: {
-    removeAvailableModules: false,
-    removeEmptyChunks: false,
-    splitChunks: false
-  },
   devServer: {
     contentBase: path.join(__dirname, 'dist'),
     compress: true,

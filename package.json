@@ -4,11 +4,11 @@
   "description": "Javascript + Webpack vanilla starter project",
   "main": "src/index.ts",
   "scripts": {
-    "start": "webpack-dev-server --mode development --hot --open",
+    "start": "webpack-dev-server --config webpack.config.dev.js --hot --open",
     "compile:tests": "tsc --project tsconfig.test.json",
     "compile:app": "tsc --project tsconfig.json",
     "compile": "run-s compile:tests compile:app",
-    "build": "webpack --mode production",
+    "build": "webpack --config webpack.config.prod.js",
     "lint": "./node_modules/.bin/eslint **/*.{js,ts,tsx}",
     "unit": "ava",
     "unit:coverage": "nyc ava",
