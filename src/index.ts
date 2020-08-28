@@ -51,76 +51,100 @@ const tileMap = [
   [1, 0, 0, 0],
   [1, 0, 0, 0],
   [1, 0, 0, 0],
-  [1, 0, 0, 0],
-  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
   [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
   [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
   [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
 ]
-const isWall = (tileMap: number[][], x: number, y: number): boolean => {
-  const pxToCord = (px: number): number => px / 64
-  const cx = Math.floor(pxToCord(x))
-  const cy = Math.floor(pxToCord(y))
-  console.log({ cx, cy })
+const pxToCord = (px: number): number => Math.floor(px / 64)
+const cellSize = 64
+const snapToGrid = (pixel: number): number => {
+  console.log(pixel)
+  console.log(pxToCord(pixel))
 
-  return tileMap[cy] !== undefined ? tileMap[cy][cx] === 1 : false
+  console.log(pxToCord(pixel) * cellSize)
+  return (pxToCord(pixel)) * cellSize
 }
+
 const map = generateMap(mapWidth, mapHeight, tileMap)
 const player = new Image()
 player.src = playerSpriteSheet
 
 let mapX = 0
 let mapY = 0
-let playerX = width / 2
-let playerY = height / 2
-const cellSize = 64
+let playerX = snapToGrid(width / 2)
+let playerY = snapToGrid(height / 2)
 
-const collusion = (x: number, y: number, dx: number, dy: number): boolean =>
-  (
-    x < dx + cellSize &&
-    x + cellSize > dx &&
-    y < dy + cellSize &&
-    y + cellSize > dy
-  )
+const speed = 64 / 6
+
+const isWall = (xCoord: number, yCoord: number): boolean => {
+  return tileMap[yCoord] !== undefined ? tileMap[yCoord][xCoord] === 1 : false
+}
 
 function update (): void {
-  const px = mapX + playerX
-  const py = mapY + playerY
-  if (collusion(px, py, 4 * 64, 5 * 64)) {
-    console.log('collision detected!')
+  const oldMapX = mapX
+  const oldMapY = mapY
+  const oldPlayerX = playerX
+  const oldPlayerY = playerY
+
+  if (state.arrowUp) {
+    if (mapY > 0 && playerY <= height / 2) {
+      mapY -= speed
+    } else if (playerY > 0) {
+      playerY -= speed
+    }
   }
 
-  if (state.arrowLeft && !isWall(tileMap, mapX + playerX - 10, mapY + playerY)) {
+  if (state.arrowDown) {
+    if (mapY < mapHeight - height && playerY >= height / 2) {
+      mapY += speed
+    } else if (playerY < height - 64) {
+      playerY += speed
+    }
+  }
+
+  if (state.arrowLeft) {
     if (mapX > 0 && playerX <= width / 2) {
       mapX -= 10
     } else if (playerX > 0) {
-      playerX -= 10
+      playerX -= speed
     }
   }
 
-  if (state.arrowRight && !isWall(tileMap, mapX + playerX + 64 + 10, mapY + playerY)) {
+  if (state.arrowRight) {
     if (mapX < mapWidth - width && playerX >= width / 2) {
       mapX += 10
     } else if (playerX < width - 64) {
-      playerX += 10
+      playerX += speed
     }
   }
 
-  if (state.arrowUp && !isWall(tileMap, mapX + playerX, mapY + playerY - 10)) {
-    if (mapY > 0 && playerY <= height / 2) {
-      mapY -= 10
-    } else if (playerY > 0) {
-      playerY -= 10
-    }
+  // console.log('resolve collisions');
+  const px = mapX + playerX
+  const py = mapY + playerY
+  const buffer = 5
+  // All  the Player Corners and what coords they are over...
+  const ax = pxToCord(px + buffer)
+  const ay = pxToCord(py + buffer)
+  const bx = pxToCord(px + 64 - buffer)
+  const by = pxToCord(py + buffer)
+  const cx = pxToCord(px + buffer)
+  const cy = pxToCord(py + 64 - buffer)
+  const dx = pxToCord(px + 64 - buffer)
+  const dy = pxToCord(py + 64 - buffer)
+
+  const revertMove = (): void => {
+    mapX = oldMapX
+    mapY = oldMapY
+    playerX = oldPlayerX
+    playerY = oldPlayerY
   }
 
-  if (state.arrowDown && !isWall(tileMap, mapX + playerX, mapY + playerY + 64 + 10)) {
-    if (mapY < mapHeight - height && playerY >= height / 2) {
-      mapY += 10
-    } else if (playerY < height - 64) {
-      playerY += 10
-    }
-  }
+  if (isWall(ax, ay)) revertMove()
+  if (isWall(bx, by)) revertMove()
+  if (isWall(cx, cy)) revertMove()
+  if (isWall(dx, dy)) revertMove()
 
   draw()
   window.requestAnimationFrame(update)
@@ -130,5 +154,4 @@ function draw (): void {
   clearCanvas()
   ctx.drawImage(map, -mapX, -mapY)
   ctx.drawImage(player, playerX, playerY)
-  ctx.drawImage(player, 4 * 64, 5 * 64)
 }

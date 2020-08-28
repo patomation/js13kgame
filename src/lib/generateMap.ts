@@ -31,7 +31,9 @@ export function generateMap (
       // Dev coords
       ctx.fillStyle = 'black'
       ctx.font = 'bold 18px Arial'
-      ctx.fillText(`${x},${y}`, x * 64 + 10, y * 64 + 30)
+      ctx.fillText(`${x},${y}`, x * 64, y * 64 + 15)
+      ctx.font = 'bold 10px Arial'
+      ctx.fillText(`${x * 64},${y * 64}`, x * 64 + 10, y * 64 + 50)
     }
   }
   ctx.restore()
