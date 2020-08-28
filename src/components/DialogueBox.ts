@@ -7,6 +7,7 @@ export const DialogueBox = (
 ): VNode => h(
   'div', {
     style: {
+      color: 'black'
     }
   },
   text.split('').map((char, i) =>
@@ -14,7 +15,7 @@ export const DialogueBox = (
       style: {
         opacity: '0',
         transition: 'opacity 50ms',
-        transitionDelay: `${i * 10}ms`,
+        // transitionDelay: `${i * 10}ms`, // this is what is crashing chrome
         delayed: {
           opacity: '1'
         }
