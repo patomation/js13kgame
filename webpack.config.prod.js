@@ -1,36 +1,35 @@
 const HtmlWebPackPlugin = require('html-webpack-plugin')
 const path = require('path')
+const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = {
   mode: 'production',
-  entry: './src/index.ts',
-  cache: true,
+  // entry: './src/index.ts',
+  entry: './build/index.js',
+  cache: false,
   optimization: {
-    removeAvailableModules: false,
-    removeEmptyChunks: false,
-    splitChunks: false
+    minimize: true,
+    minimizer: [new TerserPlugin({
+      parallel: 4,
+      terserOptions: {
+        ecma: undefined,
+        parse: {},
+        compress: {},
+        mangle: true, // Note `mangle.properties` is `false` by default.
+        module: false,
+        output: null,
+        toplevel: false,
+        nameCache: null,
+        ie8: false,
+        keep_classnames: undefined,
+        keep_fnames: false,
+        safari10: false
+      },
+      extractComments: false
+    })]
   },
   module: {
     rules: [
-      {
-        test: /\.ts$/,
-        use: {
-          loader: 'ts-loader',
-          options: {
-            transpileOnly: true, // optimizes build performance
-            experimentalWatchApi: true // optimizes build performance
-          }
-        },
-        exclude: /node_modules/
-      },
-      {
-        test: /\.(sa|sc|c)ss$/,
-        use: [
-          'style-loader', // creates style nodes from JS strings
-          'css-loader', // translates CSS into CommonJS
-          'sass-loader' // compiles Sass to CSS, using Node Sass by default
-        ]
-      },
       {
         test: /\.jpe?g$|\.ico$|\.gif$|\.png$|\.svg$|\.eot$|\.woff$|\.woff2$|\.ttf$|\.wav$|\.mp3$/,
         loader: 'file-loader?name=[name].[ext]' // Keeps original file name

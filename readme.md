@@ -27,3 +27,15 @@ npm run test
 supports naming convention: moduleName.test.ts
 Check out [ava](https://github.com/avajs/ava)
 
+
+
+## Optimize Images
+
+linux utility fro 50% reduction
+```
+optipng path/to/image.png
+```
+install optipng
+```
+sudo apt install optipng
+```

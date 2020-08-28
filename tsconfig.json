@@ -1,6 +1,7 @@
 {
   "extends": "tsconfigs/browser-executable",
   "compilerOptions": {
+    "target": "es5",
     "outDir": "build",
     "baseUrl": ".",
     "paths": {
