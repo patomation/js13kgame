@@ -1,12 +1,14 @@
 import { initCanvas, resizeCanvas, ctx, clearCanvas } from './lib/canvas'
 
-import playerSpriteSheet from '../assets/sprites/ufo.png'
+import playerSpriteSheet from '../assets/sprites/player.png'
+import tileSetImage from '../assets/tilemaps/tileSet.png'
 
 import { render } from './render'
 import { state } from './store/state'
 import { generateMap } from './lib/generateMap'
 import { initInput } from './input'
 import { loadImage } from './lib/loadImage'
+import { isWall } from './lib/isWall'
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 window.addEventListener('DOMContentLoaded', load)
@@ -20,7 +22,8 @@ let player: HTMLImageElement
 
 async function load (): Promise<void> {
   // Await for things that need to load like images then start
-  map = generateMap(mapWidth, mapHeight, tileMap)
+  const tileSet = await loadImage(tileSetImage)
+  map = await generateMap(mapWidth, mapHeight, tileMap, tileSet)
   player = await loadImage(playerSpriteSheet)
   start()
 }
@@ -64,10 +67,6 @@ let playerX = snapToGrid(width / 2)
 let playerY = snapToGrid(height / 2)
 
 const speed = 64 / 6
-
-const isWall = (xCoord: number, yCoord: number): boolean => {
-  return tileMap[yCoord] !== undefined ? tileMap[yCoord][xCoord] === 1 : false
-}
 
 function update (): void {
   const oldMapX = mapX
@@ -128,10 +127,10 @@ function update (): void {
     playerY = oldPlayerY
   }
 
-  if (isWall(ax, ay)) revertMove()
-  if (isWall(bx, by)) revertMove()
-  if (isWall(cx, cy)) revertMove()
-  if (isWall(dx, dy)) revertMove()
+  if (isWall(tileMap, ax, ay)) revertMove()
+  if (isWall(tileMap, bx, by)) revertMove()
+  if (isWall(tileMap, cx, cy)) revertMove()
+  if (isWall(tileMap, dx, dy)) revertMove()
 
   draw()
   window.requestAnimationFrame(update)

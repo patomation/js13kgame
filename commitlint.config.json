@@ -19,6 +19,7 @@
       "render",
       "snabbdom",
       "store",
+      "tilemap",
       "tools",
       "typescript",
       "canvas",
