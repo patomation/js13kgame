@@ -40,7 +40,7 @@ window.addEventListener('DOMContentLoaded', () => {
   update()
 })
 
-window.onresize = () => resizeCanvas(width, height)
+window.onresize = () => resizeCanvas(window.innerWidth, window.innerHeight)
 
 const mapWidth = 64 * 30
 const mapHeight = 64 * 20
