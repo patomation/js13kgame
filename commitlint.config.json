@@ -13,6 +13,7 @@
       "docs",
       "example",
       "inventory",
+      "lib",
       "load",
       "main",
       "render",
