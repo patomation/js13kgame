@@ -6,6 +6,7 @@ coverage
 dist
 build
 *\ copy*
+*\ (copy)*
 *.zip
 *.png~
 *.ico~

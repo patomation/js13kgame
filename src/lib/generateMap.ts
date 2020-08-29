@@ -2,213 +2,7 @@ import { isOdd } from "./isOdd"
 import { loadImage } from "./loadImage"
 import { getTile } from "./getTile"
 import { isWall } from "./isWall"
-import array2dEquals from "./array2dEquals"
-import arrayEquals from "./arrayEquals"
-
-
-const cornerScenarios = [
-  {
-    scenario: [
-      [1,1,1],
-      [0,0,0],
-      [0,0,0]
-    ],
-    tile: [1, 0]
-  },
-  {
-    scenario: [
-      [1,1,1],
-      [0,0,1],
-      [0,0,1]
-    ],
-    tile: [2, 0]
-  },
-  {
-    scenario: [
-      [0,0,1],
-      [0,0,1],
-      [0,0,1]
-    ],
-    tile: [2, 1]
-  },
-  {
-    scenario: [
-      [0,0,1],
-      [0,0,1],
-      [1,1,1]
-    ],
-    tile: [2, 2]
-  },
-  {
-    scenario: [
-      [0,0,0],
-      [0,0,0],
-      [1,1,1]
-    ],
-    tile: [1, 2]
-  },
-  {
-    scenario: [
-      [1,0,0],
-      [1,0,0],
-      [1,1,1]
-    ],
-    tile: [0, 2]
-  },
-  {
-    scenario: [
-      [1,0,0],
-      [1,0,0],
-      [1,0,0]
-    ],
-    tile: [0, 1]
-  },
-  {
-    scenario: [
-      [1,1,1],
-      [1,0,0],
-      [1,0,0]
-    ],
-    tile: [0, 0]
-  },
-  // CORNERS
-  {
-    scenario: [
-      [0,0,1],
-      [0,0,0],
-      [0,0,0]
-    ],
-    tile: [4, 2]
-  },{
-    scenario: [
-      [0,0,0],
-      [0,0,0],
-      [0,0,1]
-    ],
-    tile: [4, 0]
-  },{
-    scenario: [
-      [0,0,0],
-      [0,0,0],
-      [1,0,0]
-    ],
-    tile: [6, 0]
-  },{
-    scenario: [
-      [1,0,0],
-      [0,0,0],
-      [0,0,0]
-    ],
-    tile: [6, 2]
-  },
-  // single digits
-  {
-    scenario: [
-      [0,1,0],
-      [0,0,0],
-      [0,0,0]
-    ],
-    tile: [1, 0]
-  },
-  {
-    scenario: [
-      [0,0,0],
-      [0,0,1],
-      [0,0,0]
-    ],
-    tile: [2, 1]
-  },
-  {
-    scenario: [
-      [0,0,0],
-      [0,0,0],
-      [0,1,0]
-    ],
-    tile: [1, 2]
-  },
-  {
-    scenario: [
-      [0,0,0],
-      [1,0,0],
-      [0,0,0]
-    ],
-    tile: [0, 1]
-  },
-  // others
-  {
-    scenario: [
-      [1,1,0],
-      [0,0,0],
-      [0,0,0]
-    ],
-    tile: [1, 0]
-  },
-  {
-    scenario: [
-      [0,1,1],
-      [0,0,0],
-      [0,0,0]
-    ],
-    tile: [1, 0]
-  },
-  {
-    scenario: [
-      [0,0,1],
-      [0,0,1],
-      [0,0,0]
-    ],
-    tile: [2, 1]
-  },
-  {
-    scenario: [
-      [0,0,0],
-      [0,0,1],
-      [0,0,1]
-    ],
-    tile: [2, 1]
-  },
-  {
-    scenario: [
-      [0,0,0],
-      [0,0,0],
-      [0,1,1]
-    ],
-    tile: [1, 2]
-  },
-  {
-    scenario: [
-      [0,0,0],
-      [0,0,0],
-      [1,1,0]
-    ],
-    tile: [1, 2]
-  },
-  {
-    scenario: [
-      [0,0,0],
-      [1,0,0],
-      [1,0,0]
-    ],
-    tile: [0, 1]
-  },
-  {
-    scenario: [
-      [1,0,0],
-      [1,0,0],
-      [0,0,0]
-    ],
-    tile: [0, 1]
-  },
-  // Double walls
-  {
-    scenario: [
-      [1,0,0],
-      [1,0,0],
-      [0,0,0]
-    ],
-    tile: [0, 1]
-  },
-]
+import { rotateImage, Degrees } from "./rotateImage"
 
 export async function generateMap (
   width: number, 
@@ -245,16 +39,20 @@ export async function generateMap (
       ctx.font = 'bold 10px Arial'
       ctx.fillText(`${x * 64},${y * 64}`, x * 64 + 10, y * 64 + 50)
 
-      let tileXY: [number, number] | null = null
-      let rotate: 90 | 180 | 230 | 360 | undefined = undefined
+      const drawTile = async (tileNumber: number, degrees?: Degrees) => {
+        let tile = await getTile(tileSet, tileNumber)
+        if(degrees !== 0) tile = await rotateImage(tile, degrees as Degrees)
+        ctx.drawImage(tile, x * 64, y * 64)
+      }
+
       const corners = [
         [0,0,0],
         [0,0,0],
         [0,0,0]
       ]
-
-      if(isWall(tileMap, x, y)) {
-        tileXY = [3,0]
+    
+      if (isWall(tileMap, x, y)) {
+        await drawTile(3)
       } else {
         // check corners
         const check = [
@@ -275,58 +73,133 @@ export async function generateMap (
             corners[cy+1][cx+1] = 1
           }
         })
-        
-        cornerScenarios.forEach( ({ scenario, tile }) => {
-          if (array2dEquals(scenario, corners)) {
-            tileXY = tile as [number, number]
-          } 
-        })
-        if(tileXY === null) {
-          // do some more checks
-          if(corners[0][1] === 1 && corners[2][1] === 1) {
-            // top and bottom
-            tileXY = [3,2]
-          } else if (corners[1][0] === 1 && corners[1][2] === 1) {
-            // left and right
-            tileXY = [3,1]
-          } else if (corners[1][0] === 1 && corners[0][1] === 1 && corners[2][2] === 0) {
-            tileXY = [0,0]
-          } else if (
-            corners[0][0] === 1 &&
-            corners[1][2] === 0 &&
-            corners[2][2] === 1 &&
-            corners[2][1] === 0
-          ) {
-            tileXY = [7,1]
-          } else if (
-            corners[0][0] === 1 &&
-            corners[2][0] === 1 &&
-            corners[1][0] === 0
-          ) {
-            tileXY = [7,5]
-            rotate = 90
-          } else if (
-            corners[0][0] === 1 &&
-            corners[2][0] === 1 &&
-            corners[1][0] === 1
-          ) {
-            tileXY = [7,4]
-          } else if (
-            corners[0][2] === 1 &&
-            corners[2][2] === 1
-          ) {
-            tileXY = [6, 3]
-            rotate = 180
-          }
-        }
-      }
 
-      if(tileXY !== null) {
-        const tile = await getTile(tileSet, tileXY[0], tileXY[1], rotate)
-        ctx.drawImage(tile, x * 64, y * 64)
+        const top = corners[0][1]
+        const topRight = corners[0][2]
+        const right = corners[1][2]
+        const bottomRight = corners[2][2]
+        const bottom = corners[2][1]
+        const bottomLeft = corners[2][0]
+        const left = corners[1][0]
+        const topLeft = corners[0][0]
+        // const center = corners[1][1] // I still want this for later. Hording.
+
+        // detect all right angles aka 90s
+        if (
+          top === 1 &&
+          right === 1 &&
+          bottom  === 0 &&
+          left === 0
+        ) {
+          await drawTile(0, 90)
+        } else if (
+          top === 0 &&
+          right === 1 &&
+          bottom  === 1 &&
+          left === 0
+        ) {
+          await drawTile(0, 180)
+        } else if (
+          top === 0 &&
+          right === 0 &&
+          bottom  === 1 &&
+          left === 1
+        ) {
+          await drawTile(0, 270)
+        } else if (
+          top === 1 &&
+          right === 0 &&
+          bottom  === 0 &&
+          left === 1
+        ) {
+          await drawTile(0)
+        }
+        // Handle Flat spots
+        if (
+          top === 1 &&
+          right === 0 &&
+          bottom  === 0 &&
+          left === 0
+        ) {
+          await drawTile(1)
+        } else if (
+          top === 0 &&
+          right === 1 &&
+          bottom  === 0 &&
+          left === 0
+        ) {
+          await drawTile(1, 90)
+        } else if (
+          top === 0 &&
+          right === 0 &&
+          bottom  === 1 &&
+          left === 0
+        ) {
+          await drawTile(1, 180)
+        } else if (
+          top === 0 &&
+          right === 0 &&
+          bottom  === 0 &&
+          left === 1
+        ) {
+          await drawTile(1, 270)
+        }
+
+        // handle double flat spots
+        if (
+          top === 1 &&
+          right === 0 &&
+          bottom  === 1 &&
+          left === 0
+        ) {
+          await drawTile(1)
+          await drawTile(1, 180)
+        }
+        if (
+          top === 0 &&
+          right === 1 &&
+          bottom  === 0 &&
+          left === 1
+        ) {
+          await drawTile(1, 90)
+          await drawTile(1, 270)
+        }
+
+        // Deal with corners - but try to make the overlap the other stuff above
+        if (
+          topLeft === 1 &&
+          // but don't add it to spots where the is already a 90
+          top === 0 &&
+          left === 0
+        ) {
+          drawTile(2)
+        }
+        if (
+          topRight === 1 &&
+          // but don't add it to spots where the is already a 90
+          top === 0 &&
+          right === 0
+        ) {
+          drawTile(2, 90)
+        }
+        if (
+          bottomRight === 1 &&
+          // but don't add it to spots where the is already a 90
+          bottom === 0 &&
+          right === 0
+        ) {
+          drawTile(2, 180)
+        }
+        if (
+          bottomLeft === 1 &&
+          // but don't add it to spots where the is already a 90
+          bottom === 0 &&
+          left === 0
+        ) {
+          drawTile(2, 270)
+        }
+        
       }
-      
-      
     }
   }
   ctx.restore()

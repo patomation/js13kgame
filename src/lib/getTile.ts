@@ -1,11 +1,10 @@
 import { loadImage } from "./loadImage"
 
 
-export async function getTile (
+export async function getTileByCoord (
   tileSet: HTMLImageElement,
   x: number,
   y: number,
-  rotate?: 90 | 180 | 230 | 360,
   cellSize = 64
 ): Promise<HTMLImageElement> {
   const canvas = document.createElement('canvas')
@@ -15,17 +14,20 @@ export async function getTile (
   ctx.canvas.height = cellSize
   // crop tile
   ctx.drawImage(tileSet, -(x * cellSize), -(y * cellSize), tileSet.width, tileSet.height)
-  let image = await loadImage(ctx.canvas.toDataURL('image/png'))
-  
-  // Dumb hack to get rotation working, I need to crop before rotating... if I rotate at all...
-  if(rotate) {
-    ctx.restore()
-    ctx.clearRect(0, 0, canvas.width, canvas.width)
-    ctx.translate(canvas.width/2, canvas.height/2)
-    ctx.rotate(rotate * Math.PI / 180)
-    ctx.drawImage(image, -canvas.width/2, -canvas.width/2)
-    image = await loadImage(ctx.canvas.toDataURL('image/png'))
-  }
+  return loadImage(ctx.canvas.toDataURL('image/png'))
+}
 
-  return image
+export async function getTile (
+  tileSet: HTMLImageElement,
+  index: number,
+  cellSize = 64
+): Promise<HTMLImageElement> {
+  // get x and y from index somehow
+  const columns = Math.floor(tileSet.height / 64)
+  const y = Math.floor(index / columns)
+  const x = index < columns
+    ? index // use index as is y is 0
+    : index % columns // remainder 
+
+  return getTileByCoord(tileSet, x, y, cellSize)
 }
