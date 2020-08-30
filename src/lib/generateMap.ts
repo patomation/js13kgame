@@ -23,37 +23,33 @@ export async function generateMap (
     color = isOdd(y) ? 'gray' : 'silver'
     for (let x = 0; x < columns; x++) {
       color = color === 'gray' ? 'silver' : 'gray'
-      ctx.beginPath()
-      ctx.rect(x * cellSize, y * cellSize, cellSize, cellSize)
-      // wall color
-      let wallColor = tileMap[y] ? tileMap[y][x] === 1 ? 'purple' : null : null
-      ctx.fillStyle = wallColor || color
-      
-      ctx.fill()
-      ctx.closePath()
-
-      // Dev coords
-      ctx.fillStyle = 'black'
-      ctx.font = 'bold 18px Arial'
-      ctx.fillText(`${x},${y}`, x * 64, y * 64 + 15)
-      ctx.font = 'bold 10px Arial'
-      ctx.fillText(`${x * 64},${y * 64}`, x * 64 + 10, y * 64 + 50)
-
       const drawTile = async (tileNumber: number, degrees?: Degrees) => {
         let tile = await getTile(tileSet, tileNumber)
         if(degrees !== 0) tile = await rotateImage(tile, degrees as Degrees)
         ctx.drawImage(tile, x * 64, y * 64)
       }
-
       const corners = [
         [0,0,0],
         [0,0,0],
         [0,0,0]
       ]
-    
-      if (isWall(tileMap, x, y)) {
-        await drawTile(3)
-      } else {
+      if(!isWall(tileMap, x, y)) {
+        // Draw Dev Squares
+        ctx.beginPath()
+        ctx.rect(x * cellSize, y * cellSize, cellSize, cellSize)
+        // wall color
+        ctx.fillStyle = color
+        // only fill spaces that are not walls
+        ctx.fill()
+        ctx.closePath()
+        
+        // Dev coords
+        ctx.fillStyle = 'black'
+        ctx.font = 'bold 18px Arial'
+        ctx.fillText(`${x},${y}`, x * 64, y * 64 + 15)
+        ctx.font = 'bold 10px Arial'
+        ctx.fillText(`${x * 64},${y * 64}`, x * 64 + 10, y * 64 + 50)
+        
         // check corners
         const check = [
           [0, -1], // Up
