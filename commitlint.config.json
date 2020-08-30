@@ -17,6 +17,7 @@
       "lib",
       "load",
       "main",
+      "player",
       "render",
       "snabbdom",
       "store",

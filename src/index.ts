@@ -1,6 +1,6 @@
 import { initCanvas, resizeCanvas, ctx, clearCanvas } from './lib/canvas'
 
-import playerSpriteSheet from '../assets/sprites/player.png'
+import playerSpriteSheet from '../assets/sprites/Robot_Shooty.png'
 import tileSetImage from '../assets/tilemaps/tileSet.png'
 
 import { render } from './render'
@@ -9,6 +9,7 @@ import { generateMap } from './lib/generateMap'
 import { initInput } from './input'
 import { loadImage } from './lib/loadImage'
 import { isWall } from './lib/isWall'
+import { getTile } from './lib/getTile'
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 window.addEventListener('DOMContentLoaded', load)
@@ -19,12 +20,17 @@ const height = window.innerHeight
 
 let map: HTMLImageElement
 let player: HTMLImageElement
+const playerTiles: HTMLImageElement[] = []
 
 async function load (): Promise<void> {
   // Await for things that need to load like images then start
+  const playerSprite = await loadImage(playerSpriteSheet)
+  for (let t = 0; t < Math.round(playerSprite.width / 64); t++) {
+    const image = await getTile(playerSprite, t)
+    playerTiles.push(image)
+  }
   const tileSet = await loadImage(tileSetImage)
   map = await generateMap(mapWidth, mapHeight, tileMap, tileSet)
-  player = await loadImage(playerSpriteSheet)
   start()
 }
 
@@ -73,7 +79,28 @@ let playerY = snapToGrid(height / 2)
 
 const speed = 64 / 6
 
-function update (): void {
+const fps = 10
+const fpsInterval = 1000 / fps
+let then: number
+let now: number
+
+let frame: 0 | 1 | 2 | 3 = 0
+function update (time: number = 0): void {
+  // Throttle frame rate for some stuff
+  if (then === undefined) then = time
+  now = time
+  const elapsed = now - then
+  if (elapsed > fpsInterval) {
+    then = now - (elapsed % fpsInterval)
+
+    // cycle frames used in player animation
+    if (frame < 3) {
+      frame++
+    } else {
+      frame = 0
+    }
+  }
+
   const oldMapX = mapX
   const oldMapY = mapY
   const oldPlayerX = playerX
@@ -85,6 +112,7 @@ function update (): void {
     } else if (playerY > 0 + mapOffSetY) {
       playerY -= speed
     }
+    player = playerTiles[12 + frame]
   }
 
   if (state.arrowDown) {
@@ -93,6 +121,7 @@ function update (): void {
     } else if (playerY < height - mapOffSetY - 64) {
       playerY += speed
     }
+    player = playerTiles[16 + frame]
   }
 
   if (state.arrowLeft) {
@@ -101,6 +130,7 @@ function update (): void {
     } else if (playerX > 0 + mapOffSetX) {
       playerX -= speed
     }
+    player = playerTiles[4 + frame]
   }
 
   if (state.arrowRight) {
@@ -109,6 +139,17 @@ function update (): void {
     } else if (playerX < width - mapOffSetX - 64) {
       playerX += speed
     }
+    player = playerTiles[8 + frame]
+  }
+
+  // Player is idle
+  if (
+    !state.arrowUp &&
+    !state.arrowDown &&
+    !state.arrowLeft &&
+    !state.arrowRight
+  ) {
+    player = playerTiles[0 + frame]
   }
 
   // console.log('resolve collisions');
