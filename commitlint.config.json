@@ -25,7 +25,8 @@
       "typescript",
       "canvas",
       "view",
-      "webpack"
+      "webpack",
+      "zip"
     ]]
   }
 }
