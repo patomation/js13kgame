@@ -23,11 +23,10 @@ export async function getTile (
   cellSize = 64
 ): Promise<HTMLImageElement> {
   // get x and y from index somehow
-  const columns = Math.floor(tileSet.height / 64)
+  const columns = Math.floor(tileSet.width / 64)
   const y = Math.floor(index / columns)
   const x = index < columns
     ? index // use index as is y is 0
     : index % columns // remainder 
-
   return getTileByCoord(tileSet, x, y, cellSize)
 }
