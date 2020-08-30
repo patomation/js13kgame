@@ -60,9 +60,14 @@ const snapToGrid = (pixel: number): number => {
   console.log(pxToCord(pixel) * cellSize)
   return (pxToCord(pixel)) * cellSize
 }
+console.log('sup', (width - mapWidth) / 2)
 
-let mapX = 0
-let mapY = 0
+// Handle maps that are smaller than the viewport width
+const mapOffSetX = mapWidth < width ? (width - mapWidth) / 2 : 0
+const mapOffSetY = mapHeight < height ? (height - mapHeight) / 2 : 0
+// center if map is smaller than viewport otherwise be 0
+let mapX = -(mapOffSetX) // 0 if mapWidth > width
+let mapY = -(mapOffSetY) // 0 if mapHeight > height
 let playerX = snapToGrid(width / 2)
 let playerY = snapToGrid(height / 2)
 
@@ -77,7 +82,7 @@ function update (): void {
   if (state.arrowUp) {
     if (mapY > 0 && playerY <= height / 2) {
       mapY -= speed
-    } else if (playerY > 0) {
+    } else if (playerY > 0 + mapOffSetY) {
       playerY -= speed
     }
   }
@@ -85,7 +90,7 @@ function update (): void {
   if (state.arrowDown) {
     if (mapY < mapHeight - height && playerY >= height / 2) {
       mapY += speed
-    } else if (playerY < height - 64) {
+    } else if (playerY < height - mapOffSetY - 64) {
       playerY += speed
     }
   }
@@ -93,7 +98,7 @@ function update (): void {
   if (state.arrowLeft) {
     if (mapX > 0 && playerX <= width / 2) {
       mapX -= 10
-    } else if (playerX > 0) {
+    } else if (playerX > 0 + mapOffSetX) {
       playerX -= speed
     }
   }
@@ -101,7 +106,7 @@ function update (): void {
   if (state.arrowRight) {
     if (mapX < mapWidth - width && playerX >= width / 2) {
       mapX += 10
-    } else if (playerX < width - 64) {
+    } else if (playerX < width - mapOffSetX - 64) {
       playerX += speed
     }
   }
