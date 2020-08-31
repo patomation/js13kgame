@@ -10,14 +10,17 @@ import { initInput } from './input'
 import { loadImage } from './lib/loadImage'
 import { isWall } from './lib/isWall'
 import { getTile } from './lib/getTile'
+import { getPixelRatio } from './lib/getPixelRatio'
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 window.addEventListener('DOMContentLoaded', load)
-window.onresize = () => resizeCanvas(window.innerWidth, window.innerHeight)
-
+window.onresize = () => {
+  resizeCanvas(window.innerWidth, window.innerHeight)
+  ctx.scale(scale, scale)
+}
 const width = window.innerWidth
 const height = window.innerHeight
-
+const scale = 3
 let map: HTMLImageElement
 let player: HTMLImageElement
 const playerTiles: HTMLImageElement[] = []
@@ -39,43 +42,30 @@ function start (): void {
   render() // snabbdom
   initCanvas()
   resizeCanvas(width, height)
+  const ratio = getPixelRatio()
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0)
+  ctx.scale(scale, scale)
+  ctx.imageSmoothingEnabled = false // preserve pixels
   update() // canvas
 }
 
-const mapWidth = 64 * 30
-const mapHeight = 64 * 20
-const tileMap = [
-  [1, 1, 1, 1],
-  [1, 0, 0, 0],
-  [1, 0, 1, 0],
-  [1, 0, 0, 0],
-  [1, 0, 0, 0],
-  [1, 0, 0, 0],
-  [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
-]
-const pxToCord = (px: number): number => Math.floor(px / 64)
 const cellSize = 64
-const snapToGrid = (pixel: number): number => {
-  console.log(pixel)
-  console.log(pxToCord(pixel))
-
-  console.log(pxToCord(pixel) * cellSize)
-  return (pxToCord(pixel)) * cellSize
-}
-console.log('sup', (width - mapWidth) / 2)
+const mapWidth = cellSize * 10
+const mapHeight = cellSize * 10
+const tileMap = [[0]]
+const pxToCord = (px: number): number => Math.floor(px / cellSize)
+const snapToGrid = (pixel: number): number => (pxToCord(pixel)) * cellSize
 
 // Handle maps that are smaller than the viewport width
-const mapOffSetX = mapWidth < width ? (width - mapWidth) / 2 : 0
-const mapOffSetY = mapHeight < height ? (height - mapHeight) / 2 : 0
+const mapOffSetX = mapWidth * scale < width
+  ? ((width - (mapWidth * scale)) / 2) / scale : 0
+const mapOffSetY = mapHeight * scale < height
+  ? ((height - (mapHeight * scale)) / 2) / scale : 0
 // center if map is smaller than viewport otherwise be 0
-let mapX = -(mapOffSetX) // 0 if mapWidth > width
-let mapY = -(mapOffSetY) // 0 if mapHeight > height
-let playerX = snapToGrid(width / 2)
-let playerY = snapToGrid(height / 2)
+let mapX = mapOffSetX // 0 if mapWidth > width
+let mapY = mapOffSetY // 0 if mapHeight > height
+let playerX = snapToGrid((width / 2) / scale)
+let playerY = snapToGrid((height / 2) / scale)
 
 const speed = 64 / 6
 
@@ -85,6 +75,7 @@ let then: number
 let now: number
 
 let frame: 0 | 1 | 2 | 3 = 0
+
 function update (time: number = 0): void {
   // Throttle frame rate for some stuff
   if (then === undefined) then = time
@@ -107,36 +98,40 @@ function update (time: number = 0): void {
   const oldPlayerY = playerY
 
   if (state.arrowUp) {
-    if (mapY > 0 && playerY <= height / 2) {
-      mapY -= speed
-    } else if (playerY > 0 + mapOffSetY) {
+    // move player or camera/map
+    if (mapY < mapOffSetY && playerY <= (height / scale) / 2) {
+      mapY += speed
+    } else {
       playerY -= speed
     }
     player = playerTiles[12 + frame]
   }
 
   if (state.arrowDown) {
-    if (mapY < mapHeight - height && playerY >= height / 2) {
-      mapY += speed
-    } else if (playerY < height - mapOffSetY - 64) {
+    // move player or camera/map
+    if (-(mapY) < mapHeight - (height / scale) && playerY >= (height / scale) / 2) {
+      mapY -= speed
+    } else {
       playerY += speed
     }
     player = playerTiles[16 + frame]
   }
 
   if (state.arrowLeft) {
-    if (mapX > 0 && playerX <= width / 2) {
-      mapX -= 10
-    } else if (playerX > 0 + mapOffSetX) {
+    // move player or camera/map
+    if (mapX < mapOffSetX && playerX <= (width / scale) / 2) {
+      mapX += 10
+    } else {
       playerX -= speed
     }
     player = playerTiles[4 + frame]
   }
 
   if (state.arrowRight) {
-    if (mapX < mapWidth - width && playerX >= width / 2) {
-      mapX += 10
-    } else if (playerX < width - mapOffSetX - 64) {
+    // move player or camera/map
+    if (-(mapX) < mapWidth - (width / scale) && playerX >= (width / scale) / 2) {
+      mapX -= 10
+    } else {
       playerX += speed
     }
     player = playerTiles[8 + frame]
@@ -152,19 +147,23 @@ function update (time: number = 0): void {
     player = playerTiles[0 + frame]
   }
 
-  // console.log('resolve collisions');
-  const px = mapX + playerX
-  const py = mapY + playerY
-  const buffer = 5
+  // Center-ish Player-ish position
+  const px = playerX - mapX
+  const py = playerY - mapY
+
+  const tolerance = 5
   // All  the Player Corners and what coords they are over...
-  const ax = pxToCord(px + buffer)
-  const ay = pxToCord(py + buffer)
-  const bx = pxToCord(px + 64 - buffer)
-  const by = pxToCord(py + buffer)
-  const cx = pxToCord(px + buffer)
-  const cy = pxToCord(py + 64 - buffer)
-  const dx = pxToCord(px + 64 - buffer)
-  const dy = pxToCord(py + 64 - buffer)
+  // a - b
+  // |   |
+  // c - d
+  const ax = pxToCord(px + tolerance)
+  const ay = pxToCord(py + tolerance)
+  const bx = pxToCord(px + 64 - tolerance)
+  const by = pxToCord(py + tolerance)
+  const cx = pxToCord(px + tolerance)
+  const cy = pxToCord(py + 64 - tolerance)
+  const dx = pxToCord(px + 64 - tolerance)
+  const dy = pxToCord(py + 64 - tolerance)
 
   const revertMove = (): void => {
     mapX = oldMapX
@@ -173,10 +172,17 @@ function update (time: number = 0): void {
     playerY = oldPlayerY
   }
 
+  // collides with walls
   if (isWall(tileMap, ax, ay)) revertMove()
   if (isWall(tileMap, bx, by)) revertMove()
   if (isWall(tileMap, cx, cy)) revertMove()
   if (isWall(tileMap, dx, dy)) revertMove()
+
+  // collides with map boundary
+  if ((ay * cellSize) < 0) revertMove()
+  if ((ax * cellSize) < 0) revertMove()
+  if ((bx * cellSize) >= mapWidth) revertMove()
+  if ((dy * cellSize) >= mapHeight) revertMove()
 
   draw()
   window.requestAnimationFrame(update)
@@ -184,6 +190,6 @@ function update (time: number = 0): void {
 
 function draw (): void {
   clearCanvas()
-  ctx.drawImage(map, -mapX, -mapY)
+  ctx.drawImage(map, mapX, mapY)
   ctx.drawImage(player, playerX, playerY)
 }

@@ -16,6 +16,7 @@ export async function generateMap (
   const columns = Math.round(width / cellSize)
 
   let color = 'gray'
+  ctx.imageSmoothingEnabled = false // preserve pixels
   ctx.save()
   ctx.canvas.width = width
   ctx.canvas.height = height
