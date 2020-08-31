@@ -1,6 +1,7 @@
 const HtmlWebPackPlugin = require('html-webpack-plugin')
 const path = require('path')
 const TerserPlugin = require('terser-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 module.exports = {
   mode: 'production',
@@ -10,6 +11,7 @@ module.exports = {
   optimization: {
     minimize: true,
     minimizer: [new TerserPlugin({
+      test: /\.js(\?.*)?$/i,
       parallel: 4,
       terserOptions: {
         ecma: undefined,
@@ -18,7 +20,7 @@ module.exports = {
         mangle: true, // Note `mangle.properties` is `false` by default.
         module: false,
         output: null,
-        toplevel: false,
+        toplevel: true,
         nameCache: null,
         ie8: false,
         keep_classnames: undefined,
@@ -49,7 +51,8 @@ module.exports = {
       template: './public/index.html',
       filename: './index.html',
       favicon: './public/favicon.ico'
-    })
+    }),
+    new CleanWebpackPlugin()
   ],
   output: {
     path: path.resolve(__dirname, 'dist'),
