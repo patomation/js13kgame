@@ -1,6 +1,6 @@
 import { initCanvas, resizeCanvas, ctx, clearCanvas } from './lib/canvas'
 
-import playerSpriteSheet from '../assets/sprites/Robot_Shooty.png'
+import playerSpriteSheet from '../assets/sprites/player.png'
 import tileSetImage from '../assets/tilemaps/tileSet.png'
 
 import { render } from './render'
@@ -10,8 +10,9 @@ import { initInput } from './input'
 import { loadImage } from './lib/loadImage'
 import { isWall } from './lib/isWall'
 import { getTile } from './lib/getTile'
+import { flipImage } from './lib/flipImage'
+import { scaleImage } from './lib/scaleImage'
 import { getPixelRatio } from './lib/getPixelRatio'
-
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 window.addEventListener('DOMContentLoaded', load)
 window.onresize = () => {
@@ -25,13 +26,41 @@ let map: HTMLImageElement
 let player: HTMLImageElement
 const playerTiles: HTMLImageElement[] = []
 
+// Await for things that need to load like images then start
 async function load (): Promise<void> {
-  // Await for things that need to load like images then start
+  // Build player animated tile set
   const playerSprite = await loadImage(playerSpriteSheet)
-  for (let t = 0; t < Math.round(playerSprite.width / 64); t++) {
-    const image = await getTile(playerSprite, t)
-    playerTiles.push(image)
-  }
+
+  // Idle animation
+  playerTiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
+  playerTiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
+  playerTiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
+  playerTiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
+
+  // left
+  playerTiles.push(await scaleImage(await flipImage(await getTile(playerSprite, 2, 16)), 4))
+  playerTiles.push(await scaleImage(await flipImage(await getTile(playerSprite, 2, 16)), 4))
+  playerTiles.push(await scaleImage(await flipImage(await getTile(playerSprite, 2, 16)), 4))
+  playerTiles.push(await scaleImage(await flipImage(await getTile(playerSprite, 2, 16)), 4))
+
+  // Right
+  playerTiles.push(await scaleImage(await getTile(playerSprite, 2, 16), 4))
+  playerTiles.push(await scaleImage(await getTile(playerSprite, 2, 16), 4))
+  playerTiles.push(await scaleImage(await getTile(playerSprite, 2, 16), 4))
+  playerTiles.push(await scaleImage(await getTile(playerSprite, 2, 16), 4))
+
+  // up
+  playerTiles.push(await scaleImage(await getTile(playerSprite, 1, 16), 4))
+  playerTiles.push(await scaleImage(await getTile(playerSprite, 1, 16), 4))
+  playerTiles.push(await scaleImage(await getTile(playerSprite, 1, 16), 4))
+  playerTiles.push(await scaleImage(await getTile(playerSprite, 1, 16), 4))
+
+  // down
+  playerTiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
+  playerTiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
+  playerTiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
+  playerTiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
+
   const tileSet = await loadImage(tileSetImage)
   map = await generateMap(mapWidth, mapHeight, tileMap, tileSet)
   start()
@@ -67,7 +96,7 @@ let mapY = mapOffSetY // 0 if mapHeight > height
 let playerX = snapToGrid((width / 2) / scale)
 let playerY = snapToGrid((height / 2) / scale)
 
-const speed = 64 / 6
+const speed = 64 / 12
 
 const fps = 10
 const fpsInterval = 1000 / fps
