@@ -39,3 +39,7 @@ install optipng
 ```
 sudo apt install optipng
 ```
+
+
+## Links
+[Color Scheme](https://en.wikipedia.org/wiki/Solarized_(color_scheme))

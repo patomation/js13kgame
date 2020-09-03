@@ -1,0 +1,16 @@
+export const Base03 = '#002b36' // brblack
+export const Base02 = '#073642' // black
+export const Base01 = '#586e75' //	brgreen
+export const Base00 = '#657b83' //	bryellow
+export const Base0 = '#839496' //	brblue
+export const Base1 = '#93a1a1' //	brcyan
+export const Base2 = '#eee8d5' //	white
+export const Base3 = '#fdf6e3' // brwhite
+export const Yellow = '#b58900' // yellow
+export const Orange = '#cb4b16' // brred
+export const Red = '#dc322f' // red
+export const Magenta = '#d33682' // magenta
+export const Violet = '#6c71c4' // 	brmagenta
+export const Blue = 	'#268bd2' //	blue
+export const Cyan = 	'#2aa198' //	cyan
+export const Green = '#859900' //green 

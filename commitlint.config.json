@@ -10,6 +10,7 @@
       "build",
       "collision",
       "components",
+      "color",
       "dialogue-box",
       "docs",
       "example",
