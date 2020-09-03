@@ -172,7 +172,7 @@ export async function generateMap (
           top === 0 &&
           left === 0
         ) {
-          drawTile(2)
+          await drawTile(2)
         }
         if (
           topRight === 1 &&
@@ -180,7 +180,7 @@ export async function generateMap (
           top === 0 &&
           right === 0
         ) {
-          drawTile(2, 90)
+          await drawTile(2, 90)
         }
         if (
           bottomRight === 1 &&
@@ -188,7 +188,7 @@ export async function generateMap (
           bottom === 0 &&
           right === 0
         ) {
-          drawTile(2, 180)
+          await drawTile(2, 180)
         }
         if (
           bottomLeft === 1 &&
@@ -196,9 +196,38 @@ export async function generateMap (
           bottom === 0 &&
           left === 0
         ) {
-          drawTile(2, 270)
+          await drawTile(2, 270)
         }
-        
+
+        // handle dead ends
+        if (
+          left === 1 &&
+          top === 1 &&
+          right === 1
+        ) {
+          await drawTile(3, 0)
+        }
+        if (
+          top === 1 &&
+          right === 1 &&
+          bottom === 1
+        ) {
+          await drawTile(3, 90)
+        }
+        if (
+          right === 1 &&
+          bottom === 1 &&
+          left === 1
+        ) {
+          await drawTile(3, 180)
+        }
+        if (
+          bottom === 1 &&
+          left === 1 &&
+          top === 1
+        ) {
+          await drawTile(3, 270)
+        }
       }
     }
   }
