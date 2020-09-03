@@ -45,7 +45,7 @@ export let state: State = {
     new Item('health'),
     new Item('dungeon key')
   ],
-  score: 5000,
+  score: 0,
   showInventoryScreen: false,
   showMenuScreen: false,
   showTitleScreen: false

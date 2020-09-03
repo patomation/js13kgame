@@ -16,6 +16,7 @@
       "example",
       "game-loop",
       "hotkeys",
+      "hud",
       "inventory",
       "lib",
       "load",

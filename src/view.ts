@@ -2,7 +2,7 @@ import { h } from 'snabbdom/h' // helper function for creating vnodes
 import { Modal } from './components/Modal'
 import { State, state } from './store/state'
 import { VNode } from 'snabbdom/build/package/vnode'
-import { scoreButtonClick, startGame, resumeGame, newGame, inventoryItemClick } from './store/actions'
+import { startGame, resumeGame, newGame, inventoryItemClick } from './store/actions'
 import { DialogueBox } from './components/DialogueBox'
 import { Orange, Base03 } from './lib/solarized'
 
@@ -11,7 +11,8 @@ export const view = ({
   score,
   showInventoryScreen,
   showMenuScreen,
-  showTitleScreen
+  showTitleScreen,
+  computers
 }: State): VNode => h('section', {
   style: {
     color: Orange,
@@ -25,15 +26,16 @@ export const view = ({
       background: Base03
     }
   }, [
-    h('div', [
+    h('div', {
+      style: {
+        display: 'flex',
+        fontSize: '2rem',
+        padding: '0.5rem'
+      }
+    }, [
       h('span', 'score'),
-      h('span', {}, score),
-      'hud',
-      h('button', {
-        on: {
-          click: scoreButtonClick
-        }
-      }, 'get points')
+      h('span', { style: { paddingLeft: '1rem', flexGrow: '1' } }, score),
+      h('span', `computers: ${computers.reduce((count, { status }) => status === '200' ? count + 1 : count, 0)}/${computers.length}`)
     ])
   ]),
   h('main', {
