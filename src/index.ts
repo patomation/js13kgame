@@ -19,6 +19,7 @@ import { collision } from './lib/collision'
 import { collideWithCoin, playerOverComputer, playerNotOverComputer } from './store/actions'
 import { pxToCord } from './lib/pxToCoord'
 import { coordToPx } from './lib/coordToPx'
+import { createMap } from './lib/createMap'
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 window.addEventListener('DOMContentLoaded', load)
 window.onresize = () => {
@@ -104,12 +105,7 @@ const cellSize = 64
 const dimensions = 10
 const mapWidth = cellSize * dimensions
 const mapHeight = cellSize * dimensions
-const tileMap = [
-  [0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 2, 0, 0]
-]
-const startX = 9
-const startY = 9
+const { map: tileMap, startX, startY } = createMap(dimensions, 10, 10)
 
 // provide an initial player offset that will prevent them from spawning off the screen
 const playerOffsetY = coordToPx(startY) + 64 > height / scale
