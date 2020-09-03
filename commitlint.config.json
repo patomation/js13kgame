@@ -25,6 +25,7 @@
       "snabbdom",
       "store",
       "tilemap",
+      "tileset",
       "tools",
       "typescript",
       "canvas",

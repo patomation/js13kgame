@@ -1,7 +1,5 @@
 import { initCanvas, resizeCanvas, ctx, clearCanvas } from './lib/canvas'
 
-import computerSpriteSheet from '../assets/sprites/computer.png'
-import playerSpriteSheet from '../assets/sprites/player.png'
 import tileSetImage from '../assets/tilemaps/tileSet.png'
 
 import { render } from './render'
@@ -16,7 +14,6 @@ import { scaleImage } from './lib/scaleImage'
 import { getPixelRatio } from './lib/getPixelRatio'
 import { getBox } from './lib/getBox'
 import { Base03, Orange } from './lib/solarized'
-import { getTilesAsArray } from './lib/getTilesAsArray'
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 window.addEventListener('DOMContentLoaded', load)
 window.onresize = () => {
@@ -31,39 +28,38 @@ let computerTiles: HTMLImageElement[]
 let player: HTMLImageElement
 let playerTiles: HTMLImageElement[] = []
 
-async function getPlayerTiles (): Promise<HTMLImageElement[]> {
+async function getPlayerTiles (tileSet: HTMLImageElement): Promise<HTMLImageElement[]> {
   // Build player animated tile set
-  const playerSprite = await loadImage(playerSpriteSheet)
   const tiles = []
   // Idle animation
-  tiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
-  tiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
-  tiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
-  tiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
+  tiles.push(await scaleImage(await getTile(tileSet, 0, 16), 4))
+  tiles.push(await scaleImage(await getTile(tileSet, 0, 16), 4))
+  tiles.push(await scaleImage(await getTile(tileSet, 0, 16), 4))
+  tiles.push(await scaleImage(await getTile(tileSet, 0, 16), 4))
 
   // left
-  tiles.push(await scaleImage(await flipImage(await getTile(playerSprite, 2, 16)), 4))
-  tiles.push(await scaleImage(await flipImage(await getTile(playerSprite, 2, 16)), 4))
-  tiles.push(await scaleImage(await flipImage(await getTile(playerSprite, 2, 16)), 4))
-  tiles.push(await scaleImage(await flipImage(await getTile(playerSprite, 2, 16)), 4))
+  tiles.push(await scaleImage(await flipImage(await getTile(tileSet, 2, 16)), 4))
+  tiles.push(await scaleImage(await flipImage(await getTile(tileSet, 2, 16)), 4))
+  tiles.push(await scaleImage(await flipImage(await getTile(tileSet, 2, 16)), 4))
+  tiles.push(await scaleImage(await flipImage(await getTile(tileSet, 2, 16)), 4))
 
   // Right
-  tiles.push(await scaleImage(await getTile(playerSprite, 2, 16), 4))
-  tiles.push(await scaleImage(await getTile(playerSprite, 2, 16), 4))
-  tiles.push(await scaleImage(await getTile(playerSprite, 2, 16), 4))
-  tiles.push(await scaleImage(await getTile(playerSprite, 2, 16), 4))
+  tiles.push(await scaleImage(await getTile(tileSet, 2, 16), 4))
+  tiles.push(await scaleImage(await getTile(tileSet, 2, 16), 4))
+  tiles.push(await scaleImage(await getTile(tileSet, 2, 16), 4))
+  tiles.push(await scaleImage(await getTile(tileSet, 2, 16), 4))
 
   // up
-  tiles.push(await scaleImage(await getTile(playerSprite, 1, 16), 4))
-  tiles.push(await scaleImage(await getTile(playerSprite, 1, 16), 4))
-  tiles.push(await scaleImage(await getTile(playerSprite, 1, 16), 4))
-  tiles.push(await scaleImage(await getTile(playerSprite, 1, 16), 4))
+  tiles.push(await scaleImage(await getTile(tileSet, 1, 16), 4))
+  tiles.push(await scaleImage(await getTile(tileSet, 1, 16), 4))
+  tiles.push(await scaleImage(await getTile(tileSet, 1, 16), 4))
+  tiles.push(await scaleImage(await getTile(tileSet, 1, 16), 4))
 
   // down
-  tiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
-  tiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
-  tiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
-  tiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
+  tiles.push(await scaleImage(await getTile(tileSet, 0, 16), 4))
+  tiles.push(await scaleImage(await getTile(tileSet, 0, 16), 4))
+  tiles.push(await scaleImage(await getTile(tileSet, 0, 16), 4))
+  tiles.push(await scaleImage(await getTile(tileSet, 0, 16), 4))
   return tiles
 }
 
@@ -71,9 +67,15 @@ let helpBox: HTMLImageElement
 
 // Await for things that need to load like images then start
 async function load (): Promise<void> {
-  computerTiles = await getTilesAsArray(await loadImage(computerSpriteSheet))
-  playerTiles = await getPlayerTiles()
   const tileSet = await loadImage(tileSetImage)
+  // computerTiles = await getTilesAsArray(await loadImage(computerSpriteSheet))
+  const misc16TileSet = await getTile(tileSet, 13)
+  computerTiles = [
+    await scaleImage(await getTile(misc16TileSet, 0, 16), 4),
+    await scaleImage(await getTile(misc16TileSet, 1, 16), 4)
+  ]
+  const playerTileSet = await getTile(tileSet, 14)
+  playerTiles = await getPlayerTiles(playerTileSet)
   map = await generateMap(mapWidth, mapHeight, tileMap, tileSet)
   helpBox = await getBox(await getTile(tileSet, 12), 60, 17)
 
@@ -95,7 +97,10 @@ function start (): void {
 const cellSize = 64
 const mapWidth = cellSize * 10
 const mapHeight = cellSize * 10
-const tileMap = [[0]]
+const tileMap = [
+  [0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 2, 0, 0]
+]
 const pxToCord = (px: number): number => Math.floor(px / cellSize)
 const snapToGrid = (pixel: number): number => (pxToCord(pixel)) * cellSize
 
@@ -277,7 +282,7 @@ function draw (): void {
     if (status === '404') {
       ctx.drawImage(computerTiles[0], px, py)
     } else if (status === '200') {
-      ctx.drawImage(computerTiles[2], px, py)
+      ctx.drawImage(computerTiles[1], px, py)
     }
     if (playerOver === true && status === '404') {
       ctx.save()
