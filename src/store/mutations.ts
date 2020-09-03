@@ -8,6 +8,12 @@ export function incrementScore (amount: number): void {
   setState({ score: state.score + amount })
 }
 
+export function removeCoin (index: number): void {
+  const coins = [...state.coins]
+  coins.splice(index, 1)
+  setState({ coins })
+}
+
 export function setScore (value: number): void {
   setState({ score: value })
 }

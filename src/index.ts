@@ -14,6 +14,9 @@ import { scaleImage } from './lib/scaleImage'
 import { getPixelRatio } from './lib/getPixelRatio'
 import { getBox } from './lib/getBox'
 import { Base03, Orange } from './lib/solarized'
+import { getTileRangeAsArray } from './lib/getTileRangeAsArray'
+import { collision } from './lib/collision'
+import { collideWithCoin } from './store/actions'
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 window.addEventListener('DOMContentLoaded', load)
 window.onresize = () => {
@@ -27,7 +30,7 @@ let map: HTMLImageElement
 let computerTiles: HTMLImageElement[]
 let player: HTMLImageElement
 let playerTiles: HTMLImageElement[] = []
-
+let coin: HTMLImageElement[]
 async function getPlayerTiles (tileSet: HTMLImageElement): Promise<HTMLImageElement[]> {
   // Build player animated tile set
   const tiles = []
@@ -74,6 +77,7 @@ async function load (): Promise<void> {
     await scaleImage(await getTile(misc16TileSet, 0, 16), 4),
     await scaleImage(await getTile(misc16TileSet, 1, 16), 4)
   ]
+  coin = await getTileRangeAsArray(misc16TileSet, 4, 7, 16)
   const playerTileSet = await getTile(tileSet, 14)
   playerTiles = await getPlayerTiles(playerTileSet)
   map = await generateMap(mapWidth, mapHeight, tileMap, tileSet)
@@ -122,6 +126,21 @@ const fpsInterval = 1000 / fps
 let then: number
 let now: number
 let frame: 0 | 1 | 2 | 3 = 0
+
+/**
+ * Get px from coordinate relative to map position
+ * @param x coordinate
+ */
+function cX (x: number): number {
+  return mapX + (x * cellSize)
+}
+/**
+ * Get px from coordinate relative to map position
+ * @param y coordinate
+ */
+function cY (y: number): number {
+  return mapY + (y * cellSize)
+}
 
 function update (time: number = 0): void {
   // Throttle frame rate for some stuff
@@ -268,6 +287,17 @@ function update (time: number = 0): void {
     }
   })
 
+  // player collides with coins
+  state.coins.forEach(([x, y], index) => {
+    if (collision(
+      // remember that coins are 16x16 and centered
+      cX(x) + 32 - 8, cY(y) + 32 - 8, 16, 16,
+      playerX - mapX, playerY - mapY, 64, 64
+    )) {
+      collideWithCoin(index)
+    }
+  })
+
   draw()
   window.requestAnimationFrame(update)
 }
@@ -294,6 +324,9 @@ function draw (): void {
       ctx.fillText('hold e', px + 13, py + 15)
       ctx.restore()
     }
+  })
+  state.coins.forEach(([x, y]) => {
+    ctx.drawImage(coin[frame], cX(x) + 32 - 8, cY(y) + 32 - 8)
   })
   ctx.drawImage(player, playerX, playerY)
 }

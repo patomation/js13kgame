@@ -7,11 +7,14 @@ export interface Computer {
   status: '404' | 'off' | '200'
 }
 
+export type Coin = [number, number]
+
 export interface State {
   arrowUp: boolean
   arrowDown: boolean
   arrowLeft: boolean
   arrowRight: boolean
+  coins: Coin[]
   computers: Computer[]
   gameOver: boolean
   gameStarted: boolean
@@ -28,6 +31,7 @@ export let state: State = {
   arrowDown: false,
   arrowLeft: false,
   arrowRight: false,
+  coins: [[0, 2], [1, 2], [2, 2]],
   computers: [
     {
       coords: [3, 1],
