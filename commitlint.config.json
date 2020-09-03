@@ -15,6 +15,7 @@
       "docs",
       "example",
       "game-loop",
+      "hotkeys",
       "inventory",
       "lib",
       "load",

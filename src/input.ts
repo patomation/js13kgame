@@ -18,6 +18,22 @@ export function initInput (): void {
     .down(arrowRight)
     .up(arrowRight)
 
+  hotkey('w')
+    .down(arrowUp)
+    .up(arrowUp)
+
+  hotkey('s')
+    .down(arrowDown)
+    .up(arrowDown)
+
+  hotkey('a')
+    .down(arrowLeft)
+    .up(arrowLeft)
+
+  hotkey('d')
+    .down(arrowRight)
+    .up(arrowRight)
+
   hotkey('escape', escape)
 
   hotkey('i', inventory)
