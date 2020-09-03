@@ -4,6 +4,7 @@ import { State, state } from './store/state'
 import { VNode } from 'snabbdom/build/package/vnode'
 import { scoreButtonClick, startGame, resumeGame, newGame, inventoryItemClick } from './store/actions'
 import { DialogueBox } from './components/DialogueBox'
+import { Orange, Base03 } from './lib/solarized'
 
 export const view = ({
   gameOver,
@@ -13,7 +14,7 @@ export const view = ({
   showTitleScreen
 }: State): VNode => h('section', {
   style: {
-    color: '#fff',
+    color: Orange,
     height: '100%',
     display: 'flex',
     flexDirection: 'column'
@@ -21,7 +22,7 @@ export const view = ({
 }, [
   h('nav', {
     style: {
-      background: 'purple'
+      background: Base03
     }
   }, [
     h('div', [

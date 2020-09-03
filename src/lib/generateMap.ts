@@ -3,6 +3,7 @@ import { loadImage } from "./loadImage"
 import { getTile } from "./getTile"
 import { isWall } from "./isWall"
 import { rotateImage, Degrees } from "./rotateImage"
+import { Base02, Base03, Cyan } from "./solarized"
 
 export async function generateMap (
   width: number, 
@@ -15,15 +16,17 @@ export async function generateMap (
   const rows = Math.round(height / cellSize)
   const columns = Math.round(width / cellSize)
 
-  let color = 'gray'
+  const color1 = Base03
+  const color2 = Base02
+  let color = color1
   ctx.imageSmoothingEnabled = false // preserve pixels
   ctx.save()
   ctx.canvas.width = width
   ctx.canvas.height = height
   for (let y = 0; y < rows; y++) {
-    color = isOdd(y) ? 'gray' : 'silver'
+    color = isOdd(y) ? color1 : color2
     for (let x = 0; x < columns; x++) {
-      color = color === 'gray' ? 'silver' : 'gray'
+      color = color === color1 ? color2 : color1
       const drawTile = async (tileNumber: number, degrees?: Degrees) => {
         let tile = await getTile(tileSet, tileNumber)
         if(degrees !== 0) tile = await rotateImage(tile, degrees as Degrees)
@@ -45,7 +48,7 @@ export async function generateMap (
         ctx.closePath()
         
         // Dev coords
-        ctx.fillStyle = 'black'
+        ctx.fillStyle = Cyan
         ctx.font = 'bold 18px Arial'
         ctx.fillText(`${x},${y}`, x * 64, y * 64 + 15)
         ctx.font = 'bold 10px Arial'
