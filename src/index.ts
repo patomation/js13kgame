@@ -23,44 +23,52 @@ const width = window.innerWidth
 const height = window.innerHeight
 const scale = 3
 let map: HTMLImageElement
+let computerTiles: HTMLImageElement[]
 let player: HTMLImageElement
-const playerTiles: HTMLImageElement[] = []
+let playerTiles: HTMLImageElement[] = []
+
+async function getPlayerTiles (): Promise<HTMLImageElement[]> {
+  // Build player animated tile set
+  const playerSprite = await loadImage(playerSpriteSheet)
+  const tiles = []
+  // Idle animation
+  tiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
+  tiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
+  tiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
+  tiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
+
+  // left
+  tiles.push(await scaleImage(await flipImage(await getTile(playerSprite, 2, 16)), 4))
+  tiles.push(await scaleImage(await flipImage(await getTile(playerSprite, 2, 16)), 4))
+  tiles.push(await scaleImage(await flipImage(await getTile(playerSprite, 2, 16)), 4))
+  tiles.push(await scaleImage(await flipImage(await getTile(playerSprite, 2, 16)), 4))
+
+  // Right
+  tiles.push(await scaleImage(await getTile(playerSprite, 2, 16), 4))
+  tiles.push(await scaleImage(await getTile(playerSprite, 2, 16), 4))
+  tiles.push(await scaleImage(await getTile(playerSprite, 2, 16), 4))
+  tiles.push(await scaleImage(await getTile(playerSprite, 2, 16), 4))
+
+  // up
+  tiles.push(await scaleImage(await getTile(playerSprite, 1, 16), 4))
+  tiles.push(await scaleImage(await getTile(playerSprite, 1, 16), 4))
+  tiles.push(await scaleImage(await getTile(playerSprite, 1, 16), 4))
+  tiles.push(await scaleImage(await getTile(playerSprite, 1, 16), 4))
+
+  // down
+  tiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
+  tiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
+  tiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
+  tiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
+  return tiles
+}
+
+let helpBox: HTMLImageElement
 
 // Await for things that need to load like images then start
 async function load (): Promise<void> {
-  // Build player animated tile set
-  const playerSprite = await loadImage(playerSpriteSheet)
-
-  // Idle animation
-  playerTiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
-  playerTiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
-  playerTiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
-  playerTiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
-
-  // left
-  playerTiles.push(await scaleImage(await flipImage(await getTile(playerSprite, 2, 16)), 4))
-  playerTiles.push(await scaleImage(await flipImage(await getTile(playerSprite, 2, 16)), 4))
-  playerTiles.push(await scaleImage(await flipImage(await getTile(playerSprite, 2, 16)), 4))
-  playerTiles.push(await scaleImage(await flipImage(await getTile(playerSprite, 2, 16)), 4))
-
-  // Right
-  playerTiles.push(await scaleImage(await getTile(playerSprite, 2, 16), 4))
-  playerTiles.push(await scaleImage(await getTile(playerSprite, 2, 16), 4))
-  playerTiles.push(await scaleImage(await getTile(playerSprite, 2, 16), 4))
-  playerTiles.push(await scaleImage(await getTile(playerSprite, 2, 16), 4))
-
-  // up
-  playerTiles.push(await scaleImage(await getTile(playerSprite, 1, 16), 4))
-  playerTiles.push(await scaleImage(await getTile(playerSprite, 1, 16), 4))
-  playerTiles.push(await scaleImage(await getTile(playerSprite, 1, 16), 4))
-  playerTiles.push(await scaleImage(await getTile(playerSprite, 1, 16), 4))
-
-  // down
-  playerTiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
-  playerTiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
-  playerTiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
-  playerTiles.push(await scaleImage(await getTile(playerSprite, 0, 16), 4))
-
+  computerTiles = await getTilesAsArray(await loadImage(computerSpriteSheet))
+  playerTiles = await getPlayerTiles()
   const tileSet = await loadImage(tileSetImage)
   map = await generateMap(mapWidth, mapHeight, tileMap, tileSet)
   start()
