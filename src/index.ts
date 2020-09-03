@@ -16,7 +16,7 @@ import { getBox } from './lib/getBox'
 import { Base03, Orange } from './lib/solarized'
 import { getTileRangeAsArray } from './lib/getTileRangeAsArray'
 import { collision } from './lib/collision'
-import { collideWithCoin, playerOverComputer, playerNotOverComputer } from './store/actions'
+import { collideWithCoin, playerOverComputer, playerNotOverComputer, generateCoins } from './store/actions'
 import { pxToCord } from './lib/pxToCoord'
 import { coordToPx } from './lib/coordToPx'
 import { createMap } from './lib/createMap'
@@ -105,7 +105,10 @@ const cellSize = 64
 const dimensions = 10
 const mapWidth = cellSize * dimensions
 const mapHeight = cellSize * dimensions
-const { map: tileMap, startX, startY } = createMap(dimensions, 10, 10)
+const { map: tileMap, startX, startY } = createMap(dimensions, 30, 3)
+
+// Put coins everywhere
+generateCoins(tileMap)
 
 // provide an initial player offset that will prevent them from spawning off the screen
 const playerOffsetY = coordToPx(startY) + 64 > height / scale
@@ -278,17 +281,24 @@ function update (time: number = 0): void {
       playerNotOverComputer(index)
     }
   })
-
   // player collides with coins
-  state.coins.forEach(([x, y], index) => {
-    if (collision(
-      // remember that coins are 16x16 and centered
-      cX(x) + 32 - 8, cY(y) + 32 - 8, 16, 16,
-      playerX - mapX, playerY - mapY, 64, 64
-    )) {
-      collideWithCoin(index)
+  const checkCoinCollision = (x: number, y: number): boolean => {
+    let result = false
+    if (state.coins[y] !== undefined && state.coins[y][x] === 'c') {
+      if (collision(
+        // remember that coins are 16x16 and centered
+        cX(x) + 32 - 8, cY(y) + 32 - 8, 16, 16,
+        playerX, playerY, 64, 64
+      )) {
+        result = true
+      }
     }
-  })
+    return result
+  }
+  if (checkCoinCollision(ax, ay)) collideWithCoin(ax, ay)
+  if (checkCoinCollision(bx, by)) collideWithCoin(bx, by)
+  if (checkCoinCollision(cx, cy)) collideWithCoin(cx, cy)
+  if (checkCoinCollision(dx, dy)) collideWithCoin(dx, dy)
 
   draw()
   window.requestAnimationFrame(update)
@@ -317,8 +327,12 @@ function draw (): void {
       ctx.restore()
     }
   })
-  state.coins.forEach(([x, y]) => {
-    ctx.drawImage(coin[frame], cX(x) + 32 - 8, cY(y) + 32 - 8)
+  state.coins.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value === 'c') {
+        ctx.drawImage(coin[frame], cX(x) + 32 - 8, cY(y) + 32 - 8)
+      }
+    })
   })
   ctx.drawImage(player, playerX, playerY)
 }

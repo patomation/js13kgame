@@ -1,6 +1,7 @@
-import { incrementScore, toggleTitle, toggleMenu, gameStarted, toggleGameOver, setScore, toggleInventory, toggleArrowUp, toggleArrowDown, toggleArrowLeft, toggleArrowRight, toggleInteract, removeCoin, incrementComputerInteractProgress, setComputerStatusOk, setComputerPlayerOver } from './mutations'
+import { incrementScore, toggleTitle, toggleMenu, gameStarted, toggleGameOver, setScore, toggleInventory, toggleArrowUp, toggleArrowDown, toggleArrowLeft, toggleArrowRight, toggleInteract, removeCoin, incrementComputerInteractProgress, setComputerStatusOk, setComputerPlayerOver, setCoins } from './mutations'
 import { state } from './state'
 import { VNode } from 'snabbdom/build/package/vnode'
+import randomNumber from '../lib/randomNumber'
 
 export function arrowUp (): void {
   toggleArrowUp()
@@ -15,9 +16,17 @@ export function arrowRight (): void {
   toggleArrowRight()
 }
 
-export function collideWithCoin (index: number): void {
+export function collideWithCoin (x: number, y: number): void {
   incrementScore(1000)
-  removeCoin(index)
+  removeCoin(x, y)
+}
+
+export function generateCoins (tileMap: number[][]): void {
+  const coins: Array<Array<(string | null)>> = tileMap.map((rows) => rows.map((value) =>
+    // 40% chance of placing coin
+    value === 0 && randomNumber(0, 100) > 60 ? 'c' : null
+  ))
+  setCoins(coins)
 }
 
 export function playerOverComputer (index: number): void {

@@ -14,9 +14,14 @@ export function incrementScore (amount: number): void {
   setState({ score: state.score + amount })
 }
 
-export function removeCoin (index: number): void {
+export function removeCoin (x: number, y: number): void {
+  // todo better deep clone
   const coins = [...state.coins]
-  coins.splice(index, 1)
+  coins[y][x] = null
+  setState({ coins })
+}
+
+export function setCoins (coins: Array<Array<string | null>>): void {
   setState({ coins })
 }
 
