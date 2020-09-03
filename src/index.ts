@@ -17,6 +17,8 @@ import { Base03, Orange } from './lib/solarized'
 import { getTileRangeAsArray } from './lib/getTileRangeAsArray'
 import { collision } from './lib/collision'
 import { collideWithCoin, playerOverComputer, playerNotOverComputer } from './store/actions'
+import { pxToCord } from './lib/pxToCoord'
+import { coordToPx } from './lib/coordToPx'
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 window.addEventListener('DOMContentLoaded', load)
 window.onresize = () => {
@@ -99,25 +101,34 @@ function start (): void {
 }
 
 const cellSize = 64
-const mapWidth = cellSize * 10
-const mapHeight = cellSize * 10
+const dimensions = 10
+const mapWidth = cellSize * dimensions
+const mapHeight = cellSize * dimensions
 const tileMap = [
   [0, 0, 0, 0, 0, 0],
   [0, 0, 0, 2, 0, 0]
 ]
-const pxToCord = (px: number): number => Math.floor(px / cellSize)
-const snapToGrid = (pixel: number): number => (pxToCord(pixel)) * cellSize
+const startX = 9
+const startY = 9
+
+// provide an initial player offset that will prevent them from spawning off the screen
+const playerOffsetY = coordToPx(startY) + 64 > height / scale
+  ? coordToPx(startY) + 64 - (height / scale) : 0
+const playerOffsetX = coordToPx(startX) + 64 > width / scale
+  ? coordToPx(startX) + 64 - (width / scale) : 0
+
+let playerX = coordToPx(startX) - playerOffsetX
+let playerY = coordToPx(startY) - playerOffsetY
 
 // Handle maps that are smaller than the viewport width
 const mapOffSetX = mapWidth * scale < width
   ? ((width - (mapWidth * scale)) / 2) / scale : 0
 const mapOffSetY = mapHeight * scale < height
   ? ((height - (mapHeight * scale)) / 2) / scale : 0
+
 // center if map is smaller than viewport otherwise be 0
-let mapX = mapOffSetX // 0 if mapWidth > width
-let mapY = mapOffSetY // 0 if mapHeight > height
-let playerX = snapToGrid((width / 2) / scale)
-let playerY = snapToGrid((height / 2) / scale)
+let mapX = mapOffSetX - playerOffsetX // 0 if mapWidth > width
+let mapY = mapOffSetY - playerOffsetY // 0 if mapHeight > height
 
 const speed = 64 / 12
 
