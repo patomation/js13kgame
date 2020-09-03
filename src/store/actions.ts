@@ -1,4 +1,4 @@
-import { incrementScore, toggleTitle, toggleMenu, gameStarted, toggleGameOver, setScore, toggleInventory, toggleArrowUp, toggleArrowDown, toggleArrowLeft, toggleArrowRight } from './mutations'
+import { incrementScore, toggleTitle, toggleMenu, gameStarted, toggleGameOver, setScore, toggleInventory, toggleArrowUp, toggleArrowDown, toggleArrowLeft, toggleArrowRight, toggleInteract } from './mutations'
 import { state } from './state'
 import { VNode } from 'snabbdom/build/package/vnode'
 
@@ -57,4 +57,12 @@ export function scoreButtonClick (): void {
 export function startGame (): void {
   gameStarted(true)
   toggleTitle()
+}
+
+export function interactKeyDown (): void {
+  toggleInteract()
+}
+
+export function interactKeyUp (): void {
+  toggleInteract()
 }

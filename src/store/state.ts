@@ -1,13 +1,22 @@
 import { Item } from '../classes/Item'
 
+export interface Computer {
+  coords: [number, number],
+  playerOver?: boolean
+  interactProgress: number,
+  status: '404' | 'off' | '200'
+}
+
 export interface State {
   arrowUp: boolean
   arrowDown: boolean
   arrowLeft: boolean
   arrowRight: boolean
+  computers: Computer[]
   gameOver: boolean
   gameStarted: boolean
-  inventory: Item[],
+  interacting: boolean
+  inventory: Item[]
   score: number
   showInventoryScreen: boolean
   showMenuScreen: boolean
@@ -19,8 +28,17 @@ export let state: State = {
   arrowDown: false,
   arrowLeft: false,
   arrowRight: false,
+  computers: [
+    {
+      coords: [3, 1],
+      playerOver: false,
+      interactProgress: 0,
+      status: '404'
+    }
+  ],
   gameOver: false,
   gameStarted: false,
+  interacting: false,
   inventory: [
     new Item('helm'),
     new Item('light sword'),

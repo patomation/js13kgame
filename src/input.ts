@@ -1,5 +1,5 @@
 import { hotkey } from '@patomation/hotkey'
-import { escape, inventory, arrowLeft, arrowDown, arrowUp, arrowRight } from './store/actions'
+import { escape, inventory, arrowLeft, arrowDown, arrowUp, arrowRight, interactKeyUp, interactKeyDown } from './store/actions'
 
 export function initInput (): void {
   hotkey('arrowup')
@@ -21,4 +21,8 @@ export function initInput (): void {
   hotkey('escape', escape)
 
   hotkey('i', inventory)
+
+  hotkey('e')
+    .down(interactKeyDown)
+    .up(interactKeyUp)
 }
