@@ -2,7 +2,7 @@ import { Item } from '../classes/Item'
 
 export interface Computer {
   coords: [number, number],
-  playerOver?: boolean
+  playerOver: boolean
   interactProgress: number,
   status: '404' | 'off' | '200'
 }

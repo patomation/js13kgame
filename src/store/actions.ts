@@ -1,4 +1,4 @@
-import { incrementScore, toggleTitle, toggleMenu, gameStarted, toggleGameOver, setScore, toggleInventory, toggleArrowUp, toggleArrowDown, toggleArrowLeft, toggleArrowRight, toggleInteract, removeCoin } from './mutations'
+import { incrementScore, toggleTitle, toggleMenu, gameStarted, toggleGameOver, setScore, toggleInventory, toggleArrowUp, toggleArrowDown, toggleArrowLeft, toggleArrowRight, toggleInteract, removeCoin, incrementComputerInteractProgress, setComputerStatusOk, setComputerPlayerOver } from './mutations'
 import { state } from './state'
 import { VNode } from 'snabbdom/build/package/vnode'
 
@@ -18,6 +18,26 @@ export function arrowRight (): void {
 export function collideWithCoin (index: number): void {
   incrementScore(1000)
   removeCoin(index)
+}
+
+export function playerOverComputer (index: number): void {
+  const { playerOver, interactProgress } = state.computers[index]
+  if (!playerOver) setComputerPlayerOver(index, true)
+  if (state.interacting && state.computers[index].interactProgress < 100) {
+    incrementComputerInteractProgress(index, 1)
+  } else if (interactProgress > 0 && interactProgress !== 100) {
+    incrementComputerInteractProgress(index, -1)
+  } else if (interactProgress >= 100) {
+    setComputerStatusOk(index)
+  }
+}
+
+export function playerNotOverComputer (index: number): void {
+  const { playerOver, interactProgress } = state.computers[index]
+  if (playerOver) setComputerPlayerOver(index, false)
+  if (interactProgress > 0 && interactProgress !== 100) {
+    incrementComputerInteractProgress(index, -1)
+  }
 }
 
 export function escape (): void {

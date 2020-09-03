@@ -3,7 +3,7 @@ import { initCanvas, resizeCanvas, ctx, clearCanvas } from './lib/canvas'
 import tileSetImage from '../assets/tilemaps/tileSet.png'
 
 import { render } from './render'
-import { state, setState } from './store/state'
+import { state } from './store/state'
 import { generateMap } from './lib/generateMap'
 import { initInput } from './input'
 import { loadImage } from './lib/loadImage'
@@ -16,7 +16,7 @@ import { getBox } from './lib/getBox'
 import { Base03, Orange } from './lib/solarized'
 import { getTileRangeAsArray } from './lib/getTileRangeAsArray'
 import { collision } from './lib/collision'
-import { collideWithCoin } from './store/actions'
+import { collideWithCoin, playerOverComputer, playerNotOverComputer } from './store/actions'
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 window.addEventListener('DOMContentLoaded', load)
 window.onresize = () => {
@@ -261,29 +261,14 @@ function update (time: number = 0): void {
       const overlap = 20
       // but allow overlap so guy can walk up to computer from the bottom
       if (py < y * cellSize + overlap) revertMove()
-      // show tool tip?
-      const computers = [...state.computers]
-      computers[index].playerOver = true
-      if (state.interacting && interactProgress < 100) {
-        computers[index].interactProgress++
-      } else if (interactProgress > 0 && interactProgress !== 100) {
-        computers[index].interactProgress--
-      } else if (interactProgress >= 100) {
-        computers[index].status = '200'
-      }
-      setState({ computers })
+      playerOverComputer(index)
     } else if (
       (cx === x && cy === y) ||
       (dx === x && dy === y)
     ) {
       revertMove()
-    } else if (playerOver === true) {
-      // Set it back to false only once
-      if (state.computers[index].playerOver === true) {
-        const computers = [...state.computers]
-        computers[index].playerOver = false
-        setState({ computers })
-      }
+    } else {
+      playerNotOverComputer(index)
     }
   })
 
@@ -314,7 +299,7 @@ function draw (): void {
     } else if (status === '200') {
       ctx.drawImage(computerTiles[1], px, py)
     }
-    if (playerOver === true && status === '404') {
+    if (playerOver && status === '404') {
       ctx.save()
       ctx.drawImage(helpBox, px + 2, py + 2)
       ctx.fillStyle = Orange
