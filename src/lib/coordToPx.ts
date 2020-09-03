@@ -1,0 +1,1 @@
+export const coordToPx = (coord: number, cellSize = 64): number => coord * cellSize
