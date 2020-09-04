@@ -1,5 +1,5 @@
 import Array2D from './Array2D'
-
+import { crossDirections } from './directions'
 // Source borrowed and converted to typescript, modularized and modified by @patomation
 // https://www.freecodecamp.org/news/how-to-make-your-own-procedural-dungeon-map-generator-using-the-random-walk-algorithm-e0085c8aa9a/
 // https://codepen.io/anon/pen/aLpORx
@@ -25,7 +25,7 @@ export function createMap(
   let map = new Array2D(dimensions, dimensions, 1), // create a 2d array full of 1's
     currentRow = startY, // our current row - start at a random spot
     currentColumn = startX, // our current column - start at a random spot
-    directions = [[-1, 0], [1, 0], [0, -1], [0, 1]], // array to get a random direction from (left,right,up,down)
+    directions = crossDirections, // array to get a random direction from (left,right,up,down)
     lastDirection: number[] = [], // save the last direction we went
     randomDirection // next turn/direction - holds a value from directions
 

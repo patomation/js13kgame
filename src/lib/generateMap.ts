@@ -4,6 +4,8 @@ import { getTile } from "./getTile"
 import { isWall } from "./isWall"
 import { rotateImage, Degrees } from "./rotateImage"
 import { Base02, Base03, Cyan } from "./solarized"
+import { directions } from "./directions"
+import Array2D from "./Array2D"
 
 export async function generateMap (
   width: number, 
@@ -32,11 +34,12 @@ export async function generateMap (
         if(degrees !== 0) tile = await rotateImage(tile, degrees as Degrees)
         ctx.drawImage(tile, x * 64, y * 64)
       }
-      const corners = [
-        [0,0,0],
-        [0,0,0],
-        [0,0,0]
-      ]
+      // corners array = 
+      // [0,0,0]
+      // [0,0,0]
+      // [0,0,0]
+      //
+      const corners = new Array2D(3, 3, 0)
       if(!isWall(tileMap, x, y)) {
         // Draw Dev Squares
         ctx.beginPath()
@@ -55,17 +58,7 @@ export async function generateMap (
         ctx.fillText(`${x * 64},${y * 64}`, x * 64 + 10, y * 64 + 50)
         
         // check corners
-        const check = [
-          [0, -1], // Up
-          [1, -1], // Up/Right
-          [1, 0],  // Right
-          [1, 1],  // Right/Down
-          [0, 1],  // Down
-          [-1, 1],  // Down/Left
-          [-1, 0], // Left
-          [-1, -1]  // Left/up
-        ]
-        check.forEach(([cx, cy]) => {
+        directions.forEach(([cx, cy]) => {
           const px = x + cx
           const py = y + cy
           const isOffMap = px < 0 || px >= columns || py < 0 || py >= rows
