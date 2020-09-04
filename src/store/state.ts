@@ -1,7 +1,6 @@
 import { Item } from '../classes/Item'
 
 export interface Computer {
-  coords: [number, number],
   playerOver: boolean
   interactProgress: number,
   status: '404' | 'off' | '200'
@@ -13,7 +12,7 @@ export interface State {
   arrowLeft: boolean
   arrowRight: boolean
   coins: Array<Array<string | null>>
-  computers: Computer[]
+  computers: Computer[][]
   gameOver: boolean
   gameStarted: boolean
   interacting: boolean
@@ -30,14 +29,7 @@ export let state: State = {
   arrowLeft: false,
   arrowRight: false,
   coins: [],
-  computers: [
-    {
-      coords: [3, 1],
-      playerOver: false,
-      interactProgress: 0,
-      status: '404'
-    }
-  ],
+  computers: [],
   gameOver: false,
   gameStarted: false,
   interacting: false,

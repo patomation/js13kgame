@@ -5,14 +5,14 @@ import { VNode } from 'snabbdom/build/package/vnode'
 import { startGame, resumeGame, newGame, inventoryItemClick } from './store/actions'
 import { DialogueBox } from './components/DialogueBox'
 import { Orange, Base03 } from './lib/solarized'
+import { getComputerTotals } from './store/getters'
 
 export const view = ({
   gameOver,
   score,
   showInventoryScreen,
   showMenuScreen,
-  showTitleScreen,
-  computers
+  showTitleScreen
 }: State): VNode => h('section', {
   style: {
     color: Orange,
@@ -35,7 +35,7 @@ export const view = ({
     }, [
       h('span', 'score'),
       h('span', { style: { paddingLeft: '1rem', flexGrow: '1' } }, score),
-      h('span', `computers: ${computers.reduce((count, { status }) => status === '200' ? count + 1 : count, 0)}/${computers.length}`)
+      h('span', `computers: ${getComputerTotals().join('/')}`)
     ])
   ]),
   h('main', {

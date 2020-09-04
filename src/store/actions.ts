@@ -1,5 +1,5 @@
-import { incrementScore, toggleTitle, toggleMenu, gameStarted, toggleGameOver, setScore, toggleInventory, toggleArrowUp, toggleArrowDown, toggleArrowLeft, toggleArrowRight, toggleInteract, removeCoin, incrementComputerInteractProgress, setComputerStatusOk, setComputerPlayerOver, setCoins } from './mutations'
-import { state } from './state'
+import { incrementScore, toggleTitle, toggleMenu, gameStarted, toggleGameOver, setScore, toggleInventory, toggleArrowUp, toggleArrowDown, toggleArrowLeft, toggleArrowRight, toggleInteract, removeCoin, incrementComputerInteractProgress, setComputerStatusOk, setComputerPlayerOver, setCoins, setComputers } from './mutations'
+import { state, Computer } from './state'
 import { VNode } from 'snabbdom/build/package/vnode'
 import randomNumber from '../lib/randomNumber'
 
@@ -22,30 +22,51 @@ export function collideWithCoin (x: number, y: number): void {
 }
 
 export function generateCoins (tileMap: number[][]): void {
-  const coins: Array<Array<(string | null)>> = tileMap.map((rows) => rows.map((value) =>
+  const coins: Array<Array<(string | null)>> = tileMap.map((rows, y) => rows.map((value, x) =>
     // 40% chance of placing coin
-    value === 0 && randomNumber(0, 100) > 60 ? 'c' : null
+    // don't place unless map is empty and no computer exists
+    value === 0 &&
+    state.computers[y][x] === null &&
+    randomNumber(0, 100) > 60
+      ? 'c'
+      : null
   ))
   setCoins(coins)
 }
 
-export function playerOverComputer (index: number): void {
-  const { playerOver, interactProgress } = state.computers[index]
-  if (!playerOver) setComputerPlayerOver(index, true)
-  if (state.interacting && state.computers[index].interactProgress < 100) {
-    incrementComputerInteractProgress(index, 1)
-  } else if (interactProgress > 0 && interactProgress !== 100) {
-    incrementComputerInteractProgress(index, -1)
-  } else if (interactProgress >= 100) {
-    setComputerStatusOk(index)
+export function generateComputers (tileMap: number[][]): void {
+  const computers: Array<Array<Computer | null>> = tileMap.map((rows) => rows.map((value) =>
+    // 10% chance of placing computer
+    value === 0 && randomNumber(0, 100) <= 10 ? {
+      playerOver: false,
+      interactProgress: 0,
+      status: '404'
+    } : null
+  ))
+  setComputers(computers as Computer[][])
+}
+
+export function playerOverComputer (x: number, y: number): void {
+  if (state.computers[y] !== undefined) {
+    if (state.computers[y][x] !== null) {
+      const { playerOver, interactProgress } = state.computers[y][x]
+      if (!playerOver) setComputerPlayerOver(x, y, true)
+      if (state.interacting && interactProgress < 100) {
+        incrementComputerInteractProgress(x, y, 1)
+      } else if (interactProgress > 0 && interactProgress !== 100) {
+        incrementComputerInteractProgress(x, y, -1)
+      } else if (interactProgress >= 100) {
+        setComputerStatusOk(x, y)
+      }
+    }
   }
 }
 
-export function playerNotOverComputer (index: number): void {
-  const { playerOver, interactProgress } = state.computers[index]
-  if (playerOver) setComputerPlayerOver(index, false)
+export function playerNotOverComputer (x: number, y: number): void {
+  const { playerOver, interactProgress } = state.computers[y][x]
+  if (playerOver) setComputerPlayerOver(x, y, false)
   if (interactProgress > 0 && interactProgress !== 100) {
-    incrementComputerInteractProgress(index, -1)
+    incrementComputerInteractProgress(x, y, -1)
   }
 }
 

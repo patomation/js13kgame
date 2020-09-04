@@ -1,12 +1,12 @@
-import { state, setState } from './state'
+import { state, setState, Computer } from './state'
 
 export function gameStarted (value: boolean): void {
   setState({ gameStarted: value })
 }
 
-export function incrementComputerInteractProgress (index: number, amount: number): void {
+export function incrementComputerInteractProgress (x: number, y: number, amount: number): void {
   const computers = [...state.computers]
-  computers[index].interactProgress += amount
+  computers[y][x].interactProgress += amount
   setState({ computers })
 }
 
@@ -25,15 +25,19 @@ export function setCoins (coins: Array<Array<string | null>>): void {
   setState({ coins })
 }
 
-export function setComputerStatusOk (index: number): void {
-  const computers = [...state.computers]
-  computers[index].status = '200'
+export function setComputers (computers: Computer[][]): void {
   setState({ computers })
 }
 
-export function setComputerPlayerOver (index: number, value: boolean): void {
+export function setComputerStatusOk (x: number, y: number): void {
   const computers = [...state.computers]
-  computers[index].playerOver = value
+  computers[y][x].status = '200'
+  setState({ computers })
+}
+
+export function setComputerPlayerOver (x: number, y: number, value: boolean): void {
+  const computers = [...state.computers]
+  computers[y][x].playerOver = value
   setState({ computers })
 }
 

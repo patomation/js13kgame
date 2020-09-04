@@ -16,7 +16,7 @@ import { getBox } from './lib/getBox'
 import { Base03, Orange } from './lib/solarized'
 import { getTileRangeAsArray } from './lib/getTileRangeAsArray'
 import { collision } from './lib/collision'
-import { collideWithCoin, playerOverComputer, playerNotOverComputer, generateCoins } from './store/actions'
+import { collideWithCoin, playerOverComputer, generateCoins, generateComputers } from './store/actions'
 import { pxToCord } from './lib/pxToCoord'
 import { coordToPx } from './lib/coordToPx'
 import { createMap } from './lib/createMap'
@@ -107,6 +107,8 @@ const mapWidth = cellSize * dimensions
 const mapHeight = cellSize * dimensions
 const { map: tileMap, startX, startY } = createMap(dimensions, 30, 3)
 
+// Generate computers
+generateComputers(tileMap)
 // Put coins everywhere
 generateCoins(tileMap)
 
@@ -264,23 +266,25 @@ function update (time: number = 0): void {
   if ((bx * cellSize) >= mapWidth) revertMove()
   if ((dy * cellSize) >= mapHeight) revertMove()
 
-  state.computers.forEach(({ coords, playerOver, interactProgress }, index) => {
-    const [x, y] = coords
-    // handle top overlap
-    if ((ax === x && ay === y) || (bx === x && by === y)) {
-      const overlap = 20
-      // but allow overlap so guy can walk up to computer from the bottom
-      if (py < y * cellSize + overlap) revertMove()
-      playerOverComputer(index)
-    } else if (
-      (cx === x && cy === y) ||
-      (dx === x && dy === y)
-    ) {
-      revertMove()
-    } else {
-      playerNotOverComputer(index)
+  // collides with computers
+  const isComputer = (xCoord: number, yCoord: number): boolean => {
+    let result = false
+    if (state.computers[yCoord]?.[xCoord] !== undefined) {
+      if (state.computers[yCoord][xCoord] !== null) {
+        result = true
+      }
     }
-  })
+    return result
+  }
+
+  // if center top of player is over computer
+  if (isComputer(pxToCord(px + 32), pxToCord(py))) {
+    playerOverComputer(pxToCord(px + 32), pxToCord(py))
+  }
+
+  if (isComputer(cx, cy)) revertMove()
+  if (isComputer(dx, dy)) revertMove()
+
   // player collides with coins
   const checkCoinCollision = (x: number, y: number): boolean => {
     let result = false
@@ -307,25 +311,25 @@ function update (time: number = 0): void {
 function draw (): void {
   clearCanvas()
   ctx.drawImage(map, mapX, mapY)
-  state.computers.forEach(({ coords, playerOver, interactProgress, status }) => {
-    const [x, y] = coords
-    const px = mapX + (x * cellSize)
-    const py = mapY + (y * cellSize)
-    if (status === '404') {
-      ctx.drawImage(computerTiles[0], px, py)
-    } else if (status === '200') {
-      ctx.drawImage(computerTiles[1], px, py)
-    }
-    if (playerOver && status === '404') {
-      ctx.save()
-      ctx.drawImage(helpBox, px + 2, py + 2)
-      ctx.fillStyle = Orange
-      ctx.fillRect(px + 2, py + 19, (60 / 100) * interactProgress, 5)
-      ctx.fillStyle = Base03
-      ctx.font = 'bold 12px Arial'
-      ctx.fillText('hold e', px + 13, py + 15)
-      ctx.restore()
-    }
+  state.computers.forEach((row, y) => {
+    row.forEach((computer, x) => {
+      if (computer !== null) {
+        const px = mapX + (x * cellSize)
+        const py = mapY + (y * cellSize)
+        const { status, playerOver, interactProgress } = computer
+        ctx.drawImage(computerTiles[status === '404' ? 0 : 1], px, py)
+        if (playerOver && status === '404') {
+          ctx.save()
+          ctx.drawImage(helpBox, px + 2, py + 2)
+          ctx.fillStyle = Orange
+          ctx.fillRect(px + 2, py + 19, (60 / 100) * interactProgress, 5)
+          ctx.fillStyle = Base03
+          ctx.font = 'bold 12px Arial'
+          ctx.fillText('hold e', px + 13, py + 15)
+          ctx.restore()
+        }
+      }
+    })
   })
   state.coins.forEach((row, y) => {
     row.forEach((value, x) => {
