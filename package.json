@@ -41,7 +41,7 @@
     "@ava/babel": "1.0.1",
     "@babel/preset-env": "7.11.0",
     "@commitlint/cli": "9.1.2",
-    "@commitlint/config-conventional": "9.1.1",
+    "@commitlint/config-conventional": "11.0.0",
     "@patomation/hotkey": "1.6.1",
     "@types/webpack-env": "1.15.2",
     "@typescript-eslint/eslint-plugin": "3.9.0",
